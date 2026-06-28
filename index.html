@@ -57,6 +57,40 @@
       margin-bottom: 16px;
     }
 
+    .top-actions {
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+    }
+
+    .nav-tabs {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+    }
+
+    .nav-tabs a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .nav-tabs a.active {
+      background: #263b35;
+      color: #fff;
+    }
+
     .title h1 {
       font-size: clamp(24px, 3vw, 38px);
       line-height: 1.1;
@@ -568,6 +602,109 @@
       line-height: 1.5;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
+    .benchmark-page {
+      display: grid;
+      gap: 16px;
+    }
+
+    .benchmark-panel {
+      padding: 16px;
+    }
+
+    .benchmark-toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(140px, .8fr));
+      gap: 10px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .benchmark-table {
+      width: 100%;
+      min-width: 960px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .benchmark-table th,
+    .benchmark-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .benchmark-table th:first-child,
+    .benchmark-table td:first-child,
+    .benchmark-table th:nth-child(2),
+    .benchmark-table td:nth-child(2),
+    .benchmark-table th:nth-child(3),
+    .benchmark-table td:nth-child(3),
+    .benchmark-table th:last-child,
+    .benchmark-table td:last-child {
+      text-align: left;
+    }
+
+    .benchmark-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #eef2ee;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .benchmark-table th button {
+      width: 100%;
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 6px;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .benchmark-table th:first-child button,
+    .benchmark-table th:nth-child(2) button,
+    .benchmark-table th:nth-child(3) button,
+    .benchmark-table th:last-child button {
+      justify-content: flex-start;
+    }
+
+    .benchmark-table tbody tr:hover {
+      background: #f7f9f7;
+    }
+
+    .benchmark-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .benchmark-name {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .benchmark-count {
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: 8px;
+    }
+
     @media (max-width: 1120px) {
       .shell,
       .hero,
@@ -590,10 +727,27 @@
         grid-template-columns: 1fr;
       }
 
+      .top-actions {
+        justify-items: stretch;
+      }
+
+      .nav-tabs,
+      .source-pill {
+        width: 100%;
+      }
+
+      .nav-tabs a {
+        flex: 1;
+      }
+
       .source-pill {
         width: 100%;
         justify-content: center;
         white-space: normal;
+      }
+
+      .benchmark-toolbar {
+        grid-template-columns: 1fr;
       }
 
       .grid-3,
@@ -639,10 +793,16 @@
         <h1>神奈川県公立高校 合格判定シミュレーター</h1>
         <p>内申・学力検査・特色検査を学校別比率でS値化。ラインは編集して保存できます。</p>
       </div>
-      <div class="source-pill"><span class="dot"></span> 共通選抜方式ベース / 目安ライン</div>
+      <div class="top-actions">
+        <nav class="nav-tabs" aria-label="ページ切り替え">
+          <a href="#simulator" data-page-link="simulator">判定</a>
+          <a href="#benchmarks" data-page-link="benchmarks">全校目安表</a>
+        </nav>
+        <div class="source-pill"><span class="dot"></span> 共通選抜方式ベース / 目安ライン</div>
+      </div>
     </header>
 
-    <div class="shell">
+    <section class="shell" id="simulatorPage">
       <aside class="panel inputs" aria-label="入力">
         <section class="section">
           <div class="section-title">
@@ -875,7 +1035,77 @@
           </div>
         </section>
       </section>
-    </div>
+    </section>
+
+    <section class="benchmark-page" id="benchmarkPage" aria-label="全校目安表" hidden>
+      <div class="panel benchmark-panel">
+        <div class="section-title">
+          <div>
+            <h2>全校 60%・80% 目安表 <span class="benchmark-count" id="benchmarkCount">0校</span></h2>
+            <p class="note">S値を学校ごとの比率で均等達成率に換算し、内申は2年+3年x2の9科平均、入試は5教科平均で表示します。</p>
+          </div>
+        </div>
+        <div class="benchmark-toolbar">
+          <label>
+            学校名検索
+            <input id="benchmarkSearch" type="search" placeholder="例：大船、湘南、横浜">
+          </label>
+          <label>
+            エリア
+            <select id="benchmarkRegion"></select>
+          </label>
+          <label>
+            比率
+            <select id="benchmarkRatioFilter">
+              <option value="all">すべて</option>
+              <option value="noSpecial">特色なし</option>
+              <option value="withSpecial">特色あり</option>
+              <option value="focus">重点評価あり</option>
+            </select>
+          </label>
+          <label>
+            並び替え
+            <select id="benchmarkSortSelect">
+              <option value="chance80S-desc">80%S 高い順</option>
+              <option value="chance80S-asc">80%S 低い順</option>
+              <option value="chance60S-desc">60%S 高い順</option>
+              <option value="chance60S-asc">60%S 低い順</option>
+              <option value="chance80GradeAvg-desc">80%内申 高い順</option>
+              <option value="chance80GradeAvg-asc">80%内申 低い順</option>
+              <option value="chance80ExamAvg-desc">80%入試 高い順</option>
+              <option value="chance80ExamAvg-asc">80%入試 低い順</option>
+              <option value="chance60GradeAvg-desc">60%内申 高い順</option>
+              <option value="chance60GradeAvg-asc">60%内申 低い順</option>
+              <option value="chance60ExamAvg-desc">60%入試 高い順</option>
+              <option value="chance60ExamAvg-asc">60%入試 低い順</option>
+              <option value="name-asc">学校名順</option>
+              <option value="region-asc">エリア順</option>
+              <option value="ratio-asc">比率順</option>
+              <option value="focus-desc">重点評価あり順</option>
+            </select>
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th><button type="button" data-benchmark-sort="name">学校</button></th>
+                <th><button type="button" data-benchmark-sort="region">エリア</button></th>
+                <th><button type="button" data-benchmark-sort="ratio">比率</button></th>
+                <th><button type="button" data-benchmark-sort="chance60S">60% S</button></th>
+                <th><button type="button" data-benchmark-sort="chance60GradeAvg">60% 内申平均</button></th>
+                <th><button type="button" data-benchmark-sort="chance60ExamAvg">60% 入試平均</button></th>
+                <th><button type="button" data-benchmark-sort="chance80S">80% S</button></th>
+                <th><button type="button" data-benchmark-sort="chance80GradeAvg">80% 内申平均</button></th>
+                <th><button type="button" data-benchmark-sort="chance80ExamAvg">80% 入試平均</button></th>
+                <th><button type="button" data-benchmark-sort="focus">重点</button></th>
+              </tr>
+            </thead>
+            <tbody id="benchmarkTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -2805,7 +3035,8 @@
       deletedSchoolIds: new Set(),
       regionFilter: "all",
       comparisonIds: new Set(),
-      schoolListMode: "all"
+      schoolListMode: "all",
+      benchmarkSort: { key: "chance80S", direction: "desc" }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -2830,7 +3061,15 @@
       focusEnglishMultiplier: $("focusEnglishMultiplier"),
       focusBestPair: $("focusBestPair"),
       focusBestMultiplier: $("focusBestMultiplier"),
-      schoolListMode: $("schoolListMode")
+      schoolListMode: $("schoolListMode"),
+      simulatorPage: $("simulatorPage"),
+      benchmarkPage: $("benchmarkPage"),
+      benchmarkSearch: $("benchmarkSearch"),
+      benchmarkRegion: $("benchmarkRegion"),
+      benchmarkRatioFilter: $("benchmarkRatioFilter"),
+      benchmarkSortSelect: $("benchmarkSortSelect"),
+      benchmarkTableBody: $("benchmarkTableBody"),
+      benchmarkCount: $("benchmarkCount")
     };
 
     function clamp(value, min, max) {
@@ -2892,6 +3131,137 @@
     function getFilteredSchools() {
       if (state.regionFilter === "all") return state.schools;
       return state.schools.filter((school) => getSchoolRegion(school) === state.regionFilter);
+    }
+
+    function focusSummary(school) {
+      const focus = normalizeExamFocus(school.examFocus);
+      if (!focus) return "-";
+      const parts = [];
+      if (focus.englishMultiplier) parts.push(`英${focus.englishMultiplier}倍`);
+      if (focus.bestOf?.length && focus.bestMultiplier) {
+        parts.push(`${focus.bestOf.join("/")}高${focus.bestMultiplier}倍`);
+      }
+      return parts.join(" + ") || "-";
+    }
+
+    function benchmarkConversion(school, benchmarkKey) {
+      const benchmarks = normalizeBenchmarks(school);
+      const ratios = Array.isArray(school.ratios) ? school.ratios : [3, 7, 0];
+      const maxS = (ratios[0] + ratios[1] + ratios[2]) * 100 || 1000;
+      const s = benchmarks[benchmarkKey] || 0;
+      const rate = maxS > 0 ? s / maxS : 0;
+      return {
+        s,
+        gradeAvg: rate * 5,
+        examAvg: rate * 100
+      };
+    }
+
+    function getBenchmarkRows() {
+      return state.schools.map((school) => {
+        const chance60 = benchmarkConversion(school, "chance60");
+        const chance80 = benchmarkConversion(school, "chance80");
+        const region = getSchoolRegion(school);
+        const ratio = Array.isArray(school.ratios) ? school.ratios.join(":") : "3:7:0";
+        const focus = focusSummary(school);
+        return {
+          id: school.id,
+          name: school.name,
+          region,
+          ratio,
+          hasSpecial: Number(school.ratios?.[2] || 0) > 0,
+          hasFocus: focus !== "-",
+          focus,
+          chance60S: chance60.s,
+          chance60GradeAvg: chance60.gradeAvg,
+          chance60ExamAvg: chance60.examAvg,
+          chance80S: chance80.s,
+          chance80GradeAvg: chance80.gradeAvg,
+          chance80ExamAvg: chance80.examAvg
+        };
+      });
+    }
+
+    function fillBenchmarkRegionSelect() {
+      const current = fields.benchmarkRegion.value || "all";
+      const regions = [...new Set(state.schools.map(getSchoolRegion))];
+      const ordered = REGION_ORDER
+        .filter((region) => region === "全エリア" || regions.includes(region))
+        .map((region) => region === "全エリア" ? { value: "all", label: "全エリア" } : { value: region, label: region });
+      fields.benchmarkRegion.innerHTML = ordered.map((region) =>
+        `<option value="${escapeHtml(region.value)}">${escapeHtml(region.label)}</option>`
+      ).join("");
+      fields.benchmarkRegion.value = ordered.some((region) => region.value === current) ? current : "all";
+    }
+
+    function sortBenchmarkRows(rows) {
+      const { key, direction } = state.benchmarkSort;
+      const multiplier = direction === "asc" ? 1 : -1;
+      return [...rows].sort((a, b) => {
+        const aValue = a[key];
+        const bValue = b[key];
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return (aValue - bValue) * multiplier;
+        }
+        return String(aValue ?? "").localeCompare(String(bValue ?? ""), "ja") * multiplier;
+      });
+    }
+
+    function formatAverage(value, digits) {
+      return Number.isFinite(value) ? round(value, digits).toFixed(digits) : "-";
+    }
+
+    function renderBenchmarkTable() {
+      const query = fields.benchmarkSearch.value.trim().toLowerCase();
+      const region = fields.benchmarkRegion.value || "all";
+      const ratioFilter = fields.benchmarkRatioFilter.value || "all";
+      let rows = getBenchmarkRows().filter((row) => {
+        const matchesQuery = !query || `${row.name} ${row.region} ${row.ratio}`.toLowerCase().includes(query);
+        const matchesRegion = region === "all" || row.region === region;
+        const matchesRatio = ratioFilter === "all" ||
+          (ratioFilter === "withSpecial" && row.hasSpecial) ||
+          (ratioFilter === "noSpecial" && !row.hasSpecial) ||
+          (ratioFilter === "focus" && row.hasFocus);
+        return matchesQuery && matchesRegion && matchesRatio;
+      });
+      rows = sortBenchmarkRows(rows);
+      fields.benchmarkCount.textContent = `${rows.length}校`;
+      fields.benchmarkTableBody.innerHTML = rows.map((row) => `
+        <tr>
+          <td><span class="benchmark-name">${escapeHtml(row.name)}</span></td>
+          <td>${escapeHtml(row.region)}</td>
+          <td>${escapeHtml(row.ratio)}</td>
+          <td>${round(row.chance60S)}</td>
+          <td>${formatAverage(row.chance60GradeAvg, 2)}</td>
+          <td>${formatAverage(row.chance60ExamAvg, 1)}</td>
+          <td>${round(row.chance80S)}</td>
+          <td>${formatAverage(row.chance80GradeAvg, 2)}</td>
+          <td>${formatAverage(row.chance80ExamAvg, 1)}</td>
+          <td>${escapeHtml(row.focus)}</td>
+        </tr>
+      `).join("") || `
+        <tr>
+          <td colspan="10">条件に合う学校がありません。</td>
+        </tr>
+      `;
+      document.querySelectorAll("[data-benchmark-sort]").forEach((button) => {
+        if (!button.dataset.label) button.dataset.label = button.textContent.trim();
+        const active = button.dataset.benchmarkSort === state.benchmarkSort.key;
+        button.textContent = `${button.dataset.label}${active ? (state.benchmarkSort.direction === "asc" ? " ▲" : " ▼") : ""}`;
+      });
+    }
+
+    function setPageFromHash() {
+      const page = location.hash === "#benchmarks" ? "benchmarks" : "simulator";
+      fields.simulatorPage.hidden = page !== "simulator";
+      fields.benchmarkPage.hidden = page !== "benchmarks";
+      document.querySelectorAll("[data-page-link]").forEach((link) => {
+        link.classList.toggle("active", link.dataset.pageLink === page);
+      });
+      if (page === "benchmarks") {
+        fillBenchmarkRegionSelect();
+        renderBenchmarkTable();
+      }
     }
 
     function normalizeExamFocus(focus) {
@@ -3291,6 +3661,7 @@
 
       renderSchoolList(input);
       renderSubjectList(input.subjects);
+      renderBenchmarkTable();
       updateSpecialToggle();
       saveState();
     }
@@ -3384,6 +3755,7 @@
       ];
       school.examFocus = getExamFocusFromInputs();
       fillRegionSelect();
+      fillBenchmarkRegionSelect();
       fillSchoolSelect();
       fields.schoolSelect.value = state.selectedId;
       render();
@@ -3413,6 +3785,7 @@
       state.selectedId = newSchool.id;
       state.regionFilter = getSchoolRegion(newSchool);
       fillRegionSelect();
+      fillBenchmarkRegionSelect();
       fillSchoolSelect();
       applySchoolToInputs();
       fields.newSchoolNameInput.value = "";
@@ -3431,6 +3804,7 @@
       state.selectedId = state.schools[0].id;
       state.regionFilter = "all";
       fillRegionSelect();
+      fillBenchmarkRegionSelect();
       fillSchoolSelect();
       applySchoolToInputs();
       render();
@@ -3448,6 +3822,7 @@
         state.selectedId = state.schools[0].id;
       }
       fillRegionSelect();
+      fillBenchmarkRegionSelect();
       fillSchoolSelect();
       applySchoolToInputs();
       render();
@@ -3470,6 +3845,28 @@
         renderSchoolList(getInputs());
         saveState();
       });
+      fields.benchmarkSearch.addEventListener("input", renderBenchmarkTable);
+      fields.benchmarkRegion.addEventListener("change", renderBenchmarkTable);
+      fields.benchmarkRatioFilter.addEventListener("change", renderBenchmarkTable);
+      fields.benchmarkSortSelect.addEventListener("change", () => {
+        const [key, direction] = fields.benchmarkSortSelect.value.split("-");
+        state.benchmarkSort = { key, direction };
+        renderBenchmarkTable();
+      });
+      document.querySelectorAll("[data-benchmark-sort]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const key = button.dataset.benchmarkSort;
+          const textKeys = new Set(["name", "region", "ratio", "focus"]);
+          const defaultDirection = textKeys.has(key) ? "asc" : "desc";
+          const direction = state.benchmarkSort.key === key
+            ? (state.benchmarkSort.direction === "desc" ? "asc" : "desc")
+            : defaultDirection;
+          state.benchmarkSort = { key, direction };
+          fields.benchmarkSortSelect.value = `${key}-${direction}`;
+          renderBenchmarkTable();
+        });
+      });
+      window.addEventListener("hashchange", setPageFromHash);
       fields.specialToggle.addEventListener("click", () => {
         state.useSpecial = !state.useSpecial;
         if (!state.useSpecial) fields.ratioSpecial.value = 0;
@@ -3503,11 +3900,14 @@
 
     loadState();
     fillRegionSelect();
+    fillBenchmarkRegionSelect();
     fillSchoolSelect();
     fields.schoolListMode.value = state.schoolListMode;
+    fields.benchmarkSortSelect.value = `${state.benchmarkSort.key}-${state.benchmarkSort.direction}`;
     applySchoolToInputs();
     restoreSubjectValues();
     bindEvents();
+    setPageFromHash();
     render();
   </script>
 </body>
