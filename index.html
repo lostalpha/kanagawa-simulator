@@ -1,0 +1,3514 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>神奈川県公立高校 合格判定シミュレーター</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --panel: #ffffff;
+      --ink: #1e2420;
+      --muted: #68706b;
+      --line: #dfe4de;
+      --blue: #2f6f9f;
+      --teal: #15816f;
+      --green: #2f8d4f;
+      --amber: #c98218;
+      --red: #c4493d;
+      --coral: #db6b57;
+      --shadow: 0 18px 45px rgba(32, 42, 36, .10);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.72), rgba(246,247,244,.96)),
+        repeating-linear-gradient(135deg, rgba(47,111,159,.06) 0 1px, transparent 1px 18px);
+      color: var(--ink);
+      min-width: 320px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(1440px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 30px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .title h1 {
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.1;
+      margin: 0 0 8px;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .source-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.78);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: inline-block;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .inputs {
+      position: sticky;
+      top: 14px;
+      max-height: calc(100vh - 28px);
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .section {
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+
+    .section:first-child {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section-title h2 {
+      font-size: 15px;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .focus-score {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: -4px;
+      min-height: 16px;
+      text-align: right;
+    }
+
+    .focus-score:empty {
+      display: none;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      min-width: 0;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #cbd3cb;
+      background: #fff;
+      border-radius: 6px;
+      color: var(--ink);
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47,111,159,.14);
+    }
+
+    input[type="range"] {
+      min-height: 24px;
+      padding: 0;
+      accent-color: var(--blue);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .subjects {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .subjects input {
+      text-align: center;
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+
+    .toggle-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .switch {
+      display: inline-flex;
+      width: 48px;
+      height: 28px;
+      border-radius: 999px;
+      background: #cad2ca;
+      padding: 3px;
+      align-items: center;
+      transition: background .2s ease;
+    }
+
+    .switch::before {
+      content: "";
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      transition: transform .2s ease;
+    }
+
+    .switch.on {
+      background: var(--teal);
+    }
+
+    .switch.on::before {
+      transform: translateX(20px);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .school-actions {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .btn {
+      min-height: 40px;
+      border-radius: 6px;
+      background: #263b35;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 10px;
+    }
+
+    .btn.secondary {
+      color: var(--ink);
+      background: #e8ece7;
+      border: 1px solid var(--line);
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .main {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(290px, .75fr);
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .school-name {
+      font-size: clamp(22px, 2.4vw, 32px);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: 0;
+      margin: 0 0 6px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 7px 13px;
+      color: #fff;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status.safe { background: var(--green); }
+    .status.pass { background: var(--teal); }
+    .status.reach { background: var(--amber); }
+    .status.risk { background: var(--red); }
+
+    .big-score {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: baseline;
+      margin: 12px 0 10px;
+    }
+
+    .score-number {
+      font-size: clamp(42px, 7vw, 78px);
+      font-weight: 850;
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .score-meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .gauge-wrap {
+      padding: 12px 0 6px;
+    }
+
+    .gauge {
+      position: relative;
+      height: 28px;
+      border-radius: 999px;
+      overflow: visible;
+      background:
+        linear-gradient(
+          90deg,
+          #e56a5d 0 var(--border-pct, 45%),
+          #d99a2b var(--border-pct, 45%) var(--chance60-pct, 62%),
+          #78aa62 var(--chance60-pct, 62%) var(--chance80-pct, 75%),
+          #3f994f var(--chance80-pct, 75%) 100%
+        );
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+    }
+
+    .benchmark-mark,
+    .current-mark {
+      position: absolute;
+      top: -7px;
+      width: 4px;
+      height: 42px;
+      transform: translateX(-2px);
+      border-radius: 2px;
+    }
+
+    .benchmark-mark {
+      background: #171d1a;
+    }
+
+    .benchmark-mark.border { background: var(--red); }
+    .benchmark-mark.chance60 { background: var(--amber); }
+    .benchmark-mark.chance80 { background: var(--green); }
+    .current-mark { background: #fff; box-shadow: 0 0 0 2px #171d1a; }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcfb;
+      min-height: 78px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .action-panel {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .action-panel .plan-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .plan-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      min-height: 122px;
+    }
+
+    .plan-card .kicker {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .plan-card strong {
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .plan-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .list-panel {
+      padding: 16px;
+    }
+
+    .school-list,
+    .subject-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .school-row,
+    .subject-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .school-row {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .compare-check {
+      width: 18px;
+      height: 18px;
+      min-height: 18px;
+      accent-color: var(--teal);
+    }
+
+    .school-row button {
+      text-align: left;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      min-width: 0;
+    }
+
+    .row-title {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .row-sub {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .gap {
+      font-weight: 800;
+      min-width: 64px;
+      text-align: right;
+    }
+
+    .gap.ok { color: var(--green); }
+    .gap.mid { color: var(--amber); }
+    .gap.ng { color: var(--red); }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #e8ece7;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: var(--w, 0%);
+      background: var(--blue);
+      border-radius: inherit;
+    }
+
+    .note {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1120px) {
+      .shell,
+      .hero,
+      .tables {
+        grid-template-columns: 1fr;
+      }
+
+      .inputs {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 18px, 1440px);
+        padding-top: 12px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .source-pill {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+      }
+
+      .grid-3,
+      .subjects,
+      .metric-grid,
+      .plan-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .school-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .list-panel,
+      .inputs {
+        padding: 12px;
+      }
+
+      .result-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .status {
+        width: 100%;
+      }
+
+      .matrix {
+        min-height: 230px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="title">
+        <h1>神奈川県公立高校 合格判定シミュレーター</h1>
+        <p>内申・学力検査・特色検査を学校別比率でS値化。ラインは編集して保存できます。</p>
+      </div>
+      <div class="source-pill"><span class="dot"></span> 共通選抜方式ベース / 目安ライン</div>
+    </header>
+
+    <div class="shell">
+      <aside class="panel inputs" aria-label="入力">
+        <section class="section">
+          <div class="section-title">
+            <h2>志望校</h2>
+            <span class="mini" id="ratioText">比率</span>
+          </div>
+          <label>
+            エリア
+            <select id="regionSelect"></select>
+          </label>
+          <label style="margin-top:10px">
+            学校
+            <select id="schoolSelect"></select>
+          </label>
+          <div class="grid-2" style="margin-top:10px">
+            <label>
+              選択中の学校名
+              <input id="schoolNameInput" type="text" maxlength="32">
+            </label>
+            <label>
+              地域
+              <input id="schoolAreaInput" type="text" maxlength="18">
+            </label>
+          </div>
+          <div class="grid-2" style="margin-top:10px">
+            <label>
+              ボーダー
+              <input id="borderInput" type="number" min="0" max="1000" step="1">
+            </label>
+            <label>
+              60%目安
+              <input id="chance60Input" type="number" min="0" max="1000" step="1">
+            </label>
+          </div>
+          <div class="grid-2" style="margin-top:10px">
+            <label>
+              80%目安
+              <input id="targetInput" type="number" min="0" max="1000" step="1">
+            </label>
+            <label>
+              重点目標
+              <select id="goalSelect">
+                <option value="chance80">80%</option>
+                <option value="chance60">60%</option>
+                <option value="border">ボーダー</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>内申</h2>
+            <span class="mini"><span id="gradeRawText">0</span> / 135</span>
+          </div>
+          <div class="grid-2">
+            <label>
+              2年9科
+              <input id="grade2" type="number" min="0" max="45" step="1" value="34">
+            </label>
+            <label>
+              3年9科
+              <input id="grade3" type="number" min="0" max="45" step="1" value="37">
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>学力検査</h2>
+            <span class="mini"><span id="examRawText">0</span> / <span id="examMaxText">500</span></span>
+          </div>
+          <div class="focus-score" id="examFocusScoreText"></div>
+          <div class="subjects">
+            <label>英語<input class="subject" data-subject="英語" type="number" min="0" max="100" step="1" value="78"></label>
+            <label>数学<input class="subject" data-subject="数学" type="number" min="0" max="100" step="1" value="70"></label>
+            <label>国語<input class="subject" data-subject="国語" type="number" min="0" max="100" step="1" value="82"></label>
+            <label>理科<input class="subject" data-subject="理科" type="number" min="0" max="100" step="1" value="68"></label>
+            <label>社会<input class="subject" data-subject="社会" type="number" min="0" max="100" step="1" value="74"></label>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>特色検査</h2>
+            <span class="mini"><span id="specialRawText">0</span> / 100</span>
+          </div>
+          <div class="toggle-row">
+            <label>
+              得点
+              <input id="special" type="number" min="0" max="100" step="1" value="55">
+            </label>
+            <button id="specialToggle" class="switch" type="button" aria-label="特色検査の有無"></button>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>比率調整</h2>
+            <span class="mini">内申 / 入試 / 特色</span>
+          </div>
+          <div class="grid-3">
+            <label>内申<input id="ratioGrade" type="number" min="2" max="8" step="1"></label>
+            <label>入試<input id="ratioExam" type="number" min="2" max="8" step="1"></label>
+            <label>特色<input id="ratioSpecial" type="number" min="0" max="5" step="1"></label>
+          </div>
+          <div class="section-title" style="margin-top:14px">
+            <h2>重点評価</h2>
+            <span class="mini">学力検査</span>
+          </div>
+          <div class="grid-3">
+            <label>英語倍率<input id="focusEnglishMultiplier" type="number" min="1" max="2" step="0.1"></label>
+            <label>
+              高い方を重点化
+              <select id="focusBestPair">
+                <option value="none">なし</option>
+                <option value="mathJapanese">数学 / 国語</option>
+              </select>
+            </label>
+            <label>高い方倍率<input id="focusBestMultiplier" type="number" min="1" max="2" step="0.1"></label>
+          </div>
+          <div class="actions">
+            <button id="saveSchool" class="btn" type="button">保存</button>
+            <button id="resetAll" class="btn secondary" type="button">リセット</button>
+          </div>
+          <div class="actions school-actions">
+            <button id="deleteSchool" class="btn danger" type="button">削除</button>
+            <button id="restoreSchools" class="btn secondary" type="button">初期校復元</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>新しい学校</h2>
+            <span class="mini">現在の比率をコピー</span>
+          </div>
+          <div class="grid-2">
+            <label>
+              新しい学校名
+              <input id="newSchoolNameInput" type="text" maxlength="32" placeholder="例：〇〇高校">
+            </label>
+            <label>
+              地域
+              <input id="newSchoolAreaInput" type="text" maxlength="18" placeholder="例：湘南">
+            </label>
+          </div>
+          <button id="addSchool" class="btn secondary" type="button" style="width:100%; margin-top:10px">この学校を追加</button>
+        </section>
+      </aside>
+
+      <section class="main">
+        <section class="panel hero" aria-label="判定結果">
+          <div>
+            <div class="result-head">
+              <div>
+                <p class="school-name" id="schoolName">高校名</p>
+                <div class="score-meta" id="formulaText">計算式</div>
+              </div>
+              <div class="status" id="statusBadge">判定</div>
+            </div>
+
+            <div class="big-score">
+              <div class="score-number" id="scoreText">0</div>
+              <div class="score-meta">
+                <div>現在S値</div>
+                <div id="scoreFraction">0/1000</div>
+                <div id="gapText">差分</div>
+              </div>
+            </div>
+
+            <div class="gauge-wrap">
+              <div class="gauge" aria-hidden="true">
+                <i class="benchmark-mark border" id="borderMark" data-label="ボーダー"></i>
+                <i class="benchmark-mark chance60" id="chance60Mark" data-label="60%"></i>
+                <i class="benchmark-mark chance80" id="chance80Mark" data-label="80%"></i>
+                <i class="current-mark" id="currentMark"></i>
+              </div>
+              <div class="legend">
+                <span id="borderLegend">ボーダー</span><span id="chance60Legend">60%</span><span id="chance80Legend">80%</span>
+              </div>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric"><span>内申換算</span><strong id="gradeScore">0</strong></div>
+              <div class="metric"><span>入試換算</span><strong id="examScore">0</strong></div>
+              <div class="metric"><span>特色換算</span><strong id="specialScore">0</strong></div>
+            </div>
+          </div>
+
+          <div class="action-panel">
+            <section class="plan-grid" aria-label="改善提案">
+              <article class="plan-card">
+                <span class="kicker">入試で寄せる</span>
+                <strong id="examNeed">+0点</strong>
+                <p id="examNeedText">現状維持でライン内です。</p>
+              </article>
+              <article class="plan-card">
+                <span class="kicker">内申で寄せる</span>
+                <strong id="gradeNeed">+0</strong>
+                <p id="gradeNeedText">2年+3年×2の合計で見ます。</p>
+              </article>
+              <article class="plan-card">
+                <span class="kicker">現実的な配分</span>
+                <strong id="mixedNeed">OK</strong>
+                <p id="mixedNeedText">今の位置を維持できています。</p>
+              </article>
+            </section>
+            <p class="note">ラインは学校・年度・倍率で動きます。模試結果や塾資料に合わせて調整してください。</p>
+          </div>
+        </section>
+
+        <section class="tables">
+          <div class="panel list-panel">
+            <div class="section-title">
+              <h2>学校別の位置</h2>
+              <select id="schoolListMode" style="max-width:150px; min-height:34px">
+                <option value="all">全校</option>
+                <option value="comparison">比較対象のみ</option>
+              </select>
+            </div>
+            <div class="school-list" id="schoolList"></div>
+          </div>
+
+          <div class="panel list-panel">
+            <div class="section-title">
+              <h2>科目の伸びしろ</h2>
+              <span class="mini">100点換算</span>
+            </div>
+            <div class="subject-list" id="subjectList"></div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const BASE_SCHOOLS = [
+      {
+            "id": "shichirigahama",
+            "name": "七里ガ浜",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 763,
+            "benchmarks": {
+                  "border": 702,
+                  "chance60": 731,
+                  "chance80": 763
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-三浦初声高校-普通",
+            "name": "三浦初声",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 486,
+            "benchmarks": {
+                  "border": 410,
+                  "chance60": 454,
+                  "chance80": 486
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-上溝南高校-普通",
+            "name": "上溝南",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 686,
+            "benchmarks": {
+                  "border": 623,
+                  "chance60": 654,
+                  "chance80": 686
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-上溝高校-普通",
+            "name": "上溝",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 644,
+            "benchmarks": {
+                  "border": 578,
+                  "chance60": 612,
+                  "chance80": 644
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-上矢部高校-普通",
+            "name": "上矢部",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 526,
+            "benchmarks": {
+                  "border": 464,
+                  "chance60": 494,
+                  "chance80": 526
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-上鶴間高校-普通",
+            "name": "上鶴間",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 511,
+            "benchmarks": {
+                  "border": 449,
+                  "chance60": 479,
+                  "chance80": 511
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-二俣川高校-普通",
+            "name": "二俣川",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 555,
+            "benchmarks": {
+                  "border": 478,
+                  "chance60": 523,
+                  "chance80": 555
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-二宮高校-普通",
+            "name": "二宮",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 476,
+            "benchmarks": {
+                  "border": 396,
+                  "chance60": 444,
+                  "chance80": 476
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-伊勢原高校-普通",
+            "name": "伊勢原",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 601,
+            "benchmarks": {
+                  "border": 550,
+                  "chance60": 569,
+                  "chance80": 601
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-伊志田高校-普通",
+            "name": "伊志田",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 708,
+            "benchmarks": {
+                  "border": 640,
+                  "chance60": 676,
+                  "chance80": 708
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-住吉高校-普通",
+            "name": "住吉",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 679,
+            "benchmarks": {
+                  "border": 635,
+                  "chance60": 647,
+                  "chance80": 679
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-保土ケ谷高校-普通",
+            "name": "保土ケ谷",
+            "area": "普通",
+            "ratios": [
+                  7,
+                  3,
+                  0
+            ],
+            "target": 508,
+            "benchmarks": {
+                  "border": 434,
+                  "chance60": 476,
+                  "chance80": 508
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-元石川高校-普通",
+            "name": "元石川",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 726,
+            "benchmarks": {
+                  "border": 666,
+                  "chance60": 694,
+                  "chance80": 726
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-光陵高校-普通",
+            "name": "光陵",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 880,
+            "benchmarks": {
+                  "border": 827,
+                  "chance60": 848,
+                  "chance80": 880
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-厚木北高校-普通",
+            "name": "厚木北",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 543,
+            "benchmarks": {
+                  "border": 456,
+                  "chance60": 511,
+                  "chance80": 543
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-厚木清南高校-普通",
+            "name": "厚木清南",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 471,
+            "benchmarks": {
+                  "border": 385,
+                  "chance60": 439,
+                  "chance80": 471
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-厚木王子高校-普通",
+            "name": "厚木王子",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 697,
+            "benchmarks": {
+                  "border": 616,
+                  "chance60": 665,
+                  "chance80": 697
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-厚木西高校-普通",
+            "name": "厚木西",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 615,
+            "benchmarks": {
+                  "border": 557,
+                  "chance60": 583,
+                  "chance80": 615
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-厚木高校-普通",
+            "name": "厚木",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 933,
+            "benchmarks": {
+                  "border": 860,
+                  "chance60": 901,
+                  "chance80": 933
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-城郷高校-普通",
+            "name": "城郷",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 606,
+            "benchmarks": {
+                  "border": 558,
+                  "chance60": 574,
+                  "chance80": 606
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-多摩高校-普通",
+            "name": "多摩",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 910,
+            "benchmarks": {
+                  "border": 861,
+                  "chance60": 878,
+                  "chance80": 910
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-大和南高校-普通",
+            "name": "大和南",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 519,
+            "benchmarks": {
+                  "border": 450,
+                  "chance60": 487,
+                  "chance80": 519
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-大和西高校-普通",
+            "name": "大和西",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 655,
+            "benchmarks": {
+                  "border": 596,
+                  "chance60": 623,
+                  "chance80": 655
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-大和高校-普通",
+            "name": "大和",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 902,
+            "benchmarks": {
+                  "border": 822,
+                  "chance60": 870,
+                  "chance80": 902
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-大師高校-普通",
+            "name": "大師",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 412,
+            "benchmarks": {
+                  "border": 345,
+                  "chance60": 380,
+                  "chance80": 412
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-大磯高校-普通",
+            "name": "大磯",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 670,
+            "benchmarks": {
+                  "border": 617,
+                  "chance60": 638,
+                  "chance80": 670
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "ofuna",
+            "name": "大船",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  0
+            ],
+            "target": 734,
+            "benchmarks": {
+                  "border": 665,
+                  "chance60": 702,
+                  "chance80": 734
+            },
+            "source": "kanagaku",
+            "examFocus": {
+                  "englishMultiplier": 1.5,
+                  "bestOf": [
+                        "数学",
+                        "国語"
+                  ],
+                  "bestMultiplier": 1.5
+            },
+            "priorityDetail": "[学] 英(×1.5)国,数うち点数の高い １教科(×1.5)"
+      },
+      {
+            "id": "csv-寒川高校-普通",
+            "name": "寒川",
+            "area": "普通",
+            "ratios": [
+                  7,
+                  3,
+                  0
+            ],
+            "target": 410,
+            "benchmarks": {
+                  "border": 360,
+                  "chance60": 378,
+                  "chance80": 410
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-小田原東高校-普通",
+            "name": "小田原東",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 464,
+            "benchmarks": {
+                  "border": 370,
+                  "chance60": 432,
+                  "chance80": 464
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-小田原高校-普通",
+            "name": "小田原",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 901,
+            "benchmarks": {
+                  "border": 816,
+                  "chance60": 869,
+                  "chance80": 901
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-山北高校-普通",
+            "name": "山北",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 461,
+            "benchmarks": {
+                  "border": 383,
+                  "chance60": 429,
+                  "chance80": 461
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-岸根高校-普通",
+            "name": "岸根",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 682,
+            "benchmarks": {
+                  "border": 637,
+                  "chance60": 650,
+                  "chance80": 682
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-川和高校-普通",
+            "name": "川和",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 919,
+            "benchmarks": {
+                  "border": 854,
+                  "chance60": 887,
+                  "chance80": 919
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-川崎北高校-普通",
+            "name": "川崎北",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 567,
+            "benchmarks": {
+                  "border": 515,
+                  "chance60": 535,
+                  "chance80": 567
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市ケ尾高校-普通",
+            "name": "市ケ尾",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 814,
+            "benchmarks": {
+                  "border": 759,
+                  "chance60": 782,
+                  "chance80": 814
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立幸高校-普通",
+            "name": "市立幸",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 575,
+            "benchmarks": {
+                  "border": 531,
+                  "chance60": 543,
+                  "chance80": 575
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立戸塚高校-一般",
+            "name": "市立戸塚（一般）",
+            "area": "一般",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 797,
+            "benchmarks": {
+                  "border": 713,
+                  "chance60": 765,
+                  "chance80": 797
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立戸塚高校-音楽",
+            "name": "市立戸塚（音楽）",
+            "area": "音楽",
+            "ratios": [
+                  5,
+                  5,
+                  4
+            ],
+            "target": 697,
+            "benchmarks": {
+                  "border": 646,
+                  "chance60": 665,
+                  "chance80": 697
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立東高校-普通",
+            "name": "市立東",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 772,
+            "benchmarks": {
+                  "border": 711,
+                  "chance60": 740,
+                  "chance80": 772
+            },
+            "source": "kanagaku",
+            "examFocus": {
+                  "englishMultiplier": 1.5
+            },
+            "priorityDetail": "[学] 英(×1.5)"
+      },
+      {
+            "id": "csv-市立桜丘高校-普通",
+            "name": "市立桜丘",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  0
+            ],
+            "target": 808,
+            "benchmarks": {
+                  "border": 720,
+                  "chance60": 776,
+                  "chance80": 808
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立橘高校-普通",
+            "name": "市立橘",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 766,
+            "benchmarks": {
+                  "border": 711,
+                  "chance60": 734,
+                  "chance80": 766
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-市立金沢高校-普通",
+            "name": "市立金沢",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  0
+            ],
+            "target": 862,
+            "benchmarks": {
+                  "border": 768,
+                  "chance60": 830,
+                  "chance80": 862
+            },
+            "source": "kanagaku",
+            "examFocus": {
+                  "englishMultiplier": 1.5
+            },
+            "priorityDetail": "[学] 英(×1.5),数(×1.2)"
+      },
+      {
+            "id": "csv-市立高津高校-普通",
+            "name": "市立高津",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 668,
+            "benchmarks": {
+                  "border": 620,
+                  "chance60": 636,
+                  "chance80": 668
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-希望ケ丘高校-普通",
+            "name": "希望ケ丘",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 892,
+            "benchmarks": {
+                  "border": 821,
+                  "chance60": 860,
+                  "chance80": 892
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-平塚江南高校-普通",
+            "name": "平塚江南",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  1
+            ],
+            "target": 855,
+            "benchmarks": {
+                  "border": 768,
+                  "chance60": 823,
+                  "chance80": 855
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-平塚湘風高校-普通",
+            "name": "平塚湘風",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 431,
+            "benchmarks": {
+                  "border": 370,
+                  "chance60": 399,
+                  "chance80": 431
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-座間高校-普通",
+            "name": "座間",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 799,
+            "benchmarks": {
+                  "border": 719,
+                  "chance60": 767,
+                  "chance80": 799
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-愛川高校-普通",
+            "name": "愛川",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  2
+            ],
+            "target": 413,
+            "benchmarks": {
+                  "border": 345,
+                  "chance60": 381,
+                  "chance80": 413
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-新城高校-普通",
+            "name": "新城",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 858,
+            "benchmarks": {
+                  "border": 809,
+                  "chance60": 826,
+                  "chance80": 858
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-新栄高校-普通",
+            "name": "新栄",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 533,
+            "benchmarks": {
+                  "border": 473,
+                  "chance60": 501,
+                  "chance80": 533
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-新羽高校-普通",
+            "name": "新羽",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 535,
+            "benchmarks": {
+                  "border": 488,
+                  "chance60": 503,
+                  "chance80": 535
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-旭高校-普通",
+            "name": "旭",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 555,
+            "benchmarks": {
+                  "border": 502,
+                  "chance60": 523,
+                  "chance80": 555
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-有馬高校-普通",
+            "name": "有馬",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 621,
+            "benchmarks": {
+                  "border": 575,
+                  "chance60": 589,
+                  "chance80": 621
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-松陽高校-普通",
+            "name": "松陽",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 769,
+            "benchmarks": {
+                  "border": 699,
+                  "chance60": 737,
+                  "chance80": 769
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-柏陽高校-普通",
+            "name": "柏陽",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  2
+            ],
+            "target": 943,
+            "benchmarks": {
+                  "border": 864,
+                  "chance60": 911,
+                  "chance80": 943
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜サイエンス-理数",
+            "name": "横浜サイエンス（理数）",
+            "area": "理数",
+            "ratios": [
+                  3,
+                  7,
+                  2
+            ],
+            "target": 929,
+            "benchmarks": {
+                  "border": 997,
+                  "chance60": 897,
+                  "chance80": 929
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜南陵高校-普通",
+            "name": "横浜南陵",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 571,
+            "benchmarks": {
+                  "border": 526,
+                  "chance60": 539,
+                  "chance80": 571
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜平沼高校-普通",
+            "name": "横浜平沼",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  1
+            ],
+            "target": 871,
+            "benchmarks": {
+                  "border": 803,
+                  "chance60": 839,
+                  "chance80": 871
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜栄高校-普通",
+            "name": "横浜栄",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 717,
+            "benchmarks": {
+                  "border": 666,
+                  "chance60": 685,
+                  "chance80": 717
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜桜陽高校-普通",
+            "name": "横浜桜陽",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 467,
+            "benchmarks": {
+                  "border": 406,
+                  "chance60": 435,
+                  "chance80": 467
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜氷取沢高校-普通",
+            "name": "横浜氷取沢",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 638,
+            "benchmarks": {
+                  "border": 578,
+                  "chance60": 606,
+                  "chance80": 638
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜清陵高校-普通",
+            "name": "横浜清陵",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 632,
+            "benchmarks": {
+                  "border": 599,
+                  "chance60": 600,
+                  "chance80": 632
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜瀬谷高校-普通",
+            "name": "横浜瀬谷",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 682,
+            "benchmarks": {
+                  "border": 608,
+                  "chance60": 650,
+                  "chance80": 682
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜立野高校-普通",
+            "name": "横浜立野",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 617,
+            "benchmarks": {
+                  "border": 577,
+                  "chance60": 585,
+                  "chance80": 617
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜緑ケ丘高校-普通",
+            "name": "横浜緑ケ丘",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 927,
+            "benchmarks": {
+                  "border": 867,
+                  "chance60": 895,
+                  "chance80": 927
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜緑園高校-普通",
+            "name": "横浜緑園",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 519,
+            "benchmarks": {
+                  "border": 473,
+                  "chance60": 487,
+                  "chance80": 519
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横浜翠嵐高校-普通",
+            "name": "横浜翠嵐",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  3
+            ],
+            "target": 960,
+            "benchmarks": {
+                  "border": 914,
+                  "chance60": 928,
+                  "chance80": 960
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-横須賀大津高校-普通",
+            "name": "横須賀大津",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 722,
+            "benchmarks": {
+                  "border": 633,
+                  "chance60": 690,
+                  "chance80": 722
+            },
+            "source": "kanagaku",
+            "examFocus": {
+                  "englishMultiplier": 1.2
+            },
+            "priorityDetail": "[学] 英(×1.2)"
+      },
+      {
+            "id": "csv-横須賀高校-普通",
+            "name": "横須賀",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  1
+            ],
+            "target": 882,
+            "benchmarks": {
+                  "border": 786,
+                  "chance60": 850,
+                  "chance80": 882
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-橋本高校-普通",
+            "name": "橋本",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 630,
+            "benchmarks": {
+                  "border": 577,
+                  "chance60": 598,
+                  "chance80": 630
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-津久井浜高校-普通",
+            "name": "津久井浜",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 608,
+            "benchmarks": {
+                  "border": 523,
+                  "chance60": 576,
+                  "chance80": 608
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-津久井高校-普通",
+            "name": "津久井",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 422,
+            "benchmarks": {
+                  "border": 400,
+                  "chance60": 394,
+                  "chance80": 422
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-海老名高校-普通",
+            "name": "海老名",
+            "area": "普通",
+            "ratios": [
+                  3,
+                  7,
+                  0
+            ],
+            "target": 825,
+            "benchmarks": {
+                  "border": 746,
+                  "chance60": 793,
+                  "chance80": 825
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-港北高校-普通",
+            "name": "港北",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 758,
+            "benchmarks": {
+                  "border": 702,
+                  "chance60": 726,
+                  "chance80": 758
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-湘南台高校-普通",
+            "name": "湘南台",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 716,
+            "benchmarks": {
+                  "border": 670,
+                  "chance60": 684,
+                  "chance80": 716
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-湘南高校-普通",
+            "name": "湘南",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  2
+            ],
+            "target": 969,
+            "benchmarks": {
+                  "border": 901,
+                  "chance60": 937,
+                  "chance80": 969
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-生田東高校-普通",
+            "name": "生田東",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 499,
+            "benchmarks": {
+                  "border": 429,
+                  "chance60": 467,
+                  "chance80": 499
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-生田高校-普通",
+            "name": "生田",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 783,
+            "benchmarks": {
+                  "border": 709,
+                  "chance60": 751,
+                  "chance80": 783
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-白山高校-普通",
+            "name": "白山",
+            "area": "普通",
+            "ratios": [
+                  7,
+                  3,
+                  0
+            ],
+            "target": 488,
+            "benchmarks": {
+                  "border": 448,
+                  "chance60": 456,
+                  "chance80": 488
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-百合丘高校-普通",
+            "name": "百合丘",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 559,
+            "benchmarks": {
+                  "border": 501,
+                  "chance60": 527,
+                  "chance80": 559
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-相模原城山高校-普通",
+            "name": "相模原城山",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 521,
+            "benchmarks": {
+                  "border": 442,
+                  "chance60": 489,
+                  "chance80": 521
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-相模原弥栄高校-普通",
+            "name": "相模原弥栄",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 816,
+            "benchmarks": {
+                  "border": 763,
+                  "chance60": 784,
+                  "chance80": 816
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-相模原高校-普通",
+            "name": "相模原",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 902,
+            "benchmarks": {
+                  "border": 813,
+                  "chance60": 870,
+                  "chance80": 902
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-相模田名高校-普通",
+            "name": "相模田名",
+            "area": "普通",
+            "ratios": [
+                  7,
+                  3,
+                  0
+            ],
+            "target": 553,
+            "benchmarks": {
+                  "border": 491,
+                  "chance60": 521,
+                  "chance80": 553
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-県立川崎高校-普通",
+            "name": "県立川崎",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 578,
+            "benchmarks": {
+                  "border": 539,
+                  "chance60": 546,
+                  "chance80": 578
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-神奈川総合高校-個性",
+            "name": "神奈川総合（個性）",
+            "area": "個性",
+            "ratios": [
+                  3,
+                  7,
+                  0
+            ],
+            "target": 897,
+            "benchmarks": {
+                  "border": 834,
+                  "chance60": 865,
+                  "chance80": 897
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-神奈川総合高校-国際",
+            "name": "神奈川総合（国際）",
+            "area": "国際",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 863,
+            "benchmarks": {
+                  "border": 803,
+                  "chance60": 833,
+                  "chance80": 863
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-秦野曽屋高校-普通",
+            "name": "秦野曽屋",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 584,
+            "benchmarks": {
+                  "border": 503,
+                  "chance60": 552,
+                  "chance80": 584
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-秦野高校-普通",
+            "name": "秦野",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 741,
+            "benchmarks": {
+                  "border": 655,
+                  "chance60": 709,
+                  "chance80": 741
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-綾瀬西高校-普通",
+            "name": "綾瀬西",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 458,
+            "benchmarks": {
+                  "border": 390,
+                  "chance60": 426,
+                  "chance80": 458
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-綾瀬高校-普通",
+            "name": "綾瀬",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 572,
+            "benchmarks": {
+                  "border": 490,
+                  "chance60": 540,
+                  "chance80": 572
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-舞岡高校-普通",
+            "name": "舞岡",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  3
+            ],
+            "target": 579,
+            "benchmarks": {
+                  "border": 528,
+                  "chance60": 547,
+                  "chance80": 579
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-茅ケ崎北陵高校-普通",
+            "name": "茅ケ崎北陵",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 828,
+            "benchmarks": {
+                  "border": 750,
+                  "chance60": 796,
+                  "chance80": 828
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-茅ケ崎西浜高校-普通",
+            "name": "茅ケ崎西浜",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 544,
+            "benchmarks": {
+                  "border": 491,
+                  "chance60": 512,
+                  "chance80": 544
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-茅ケ崎高校-普通",
+            "name": "茅ケ崎",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 654,
+            "benchmarks": {
+                  "border": 610,
+                  "chance60": 622,
+                  "chance80": 654
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-荏田高校-普通",
+            "name": "荏田",
+            "area": "普通",
+            "ratios": [
+                  6,
+                  4,
+                  0
+            ],
+            "target": 648,
+            "benchmarks": {
+                  "border": 601,
+                  "chance60": 616,
+                  "chance80": 648
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-菅高校-普通",
+            "name": "菅",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 454,
+            "benchmarks": {
+                  "border": 374,
+                  "chance60": 422,
+                  "chance80": 454
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-藤沢清流高校-普通",
+            "name": "藤沢清流",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 590,
+            "benchmarks": {
+                  "border": 540,
+                  "chance60": 558,
+                  "chance80": 590
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-藤沢西高校-普通",
+            "name": "藤沢西",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 757,
+            "benchmarks": {
+                  "border": 693,
+                  "chance60": 725,
+                  "chance80": 757
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-西湘高校-普通",
+            "name": "西湘",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 712,
+            "benchmarks": {
+                  "border": 637,
+                  "chance60": 680,
+                  "chance80": 712
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-足柄高校-普通",
+            "name": "足柄",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 537,
+            "benchmarks": {
+                  "border": 455,
+                  "chance60": 505,
+                  "chance80": 537
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-追浜高校-普通",
+            "name": "追浜",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 784,
+            "benchmarks": {
+                  "border": 738,
+                  "chance60": 752,
+                  "chance80": 784
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-逗子葉山高校-普通",
+            "name": "逗子葉山",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 541,
+            "benchmarks": {
+                  "border": 492,
+                  "chance60": 509,
+                  "chance80": 541
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-金井高校-普通",
+            "name": "金井",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 629,
+            "benchmarks": {
+                  "border": 562,
+                  "chance60": 597,
+                  "chance80": 629
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-鎌倉高校-普通",
+            "name": "鎌倉",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  1
+            ],
+            "target": 870,
+            "benchmarks": {
+                  "border": 806,
+                  "chance60": 838,
+                  "chance80": 870
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-霧が丘高校-普通",
+            "name": "霧が丘",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 592,
+            "benchmarks": {
+                  "border": 546,
+                  "chance60": 560,
+                  "chance80": 592
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-高浜高校-普通",
+            "name": "高浜",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 533,
+            "benchmarks": {
+                  "border": 455,
+                  "chance60": 501,
+                  "chance80": 533
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-鶴嶺高校-普通",
+            "name": "鶴嶺",
+            "area": "普通",
+            "ratios": [
+                  4,
+                  6,
+                  0
+            ],
+            "target": 680,
+            "benchmarks": {
+                  "border": 622,
+                  "chance60": 648,
+                  "chance80": 680
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-鶴見高校-普通",
+            "name": "鶴見",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 704,
+            "benchmarks": {
+                  "border": 648,
+                  "chance60": 672,
+                  "chance80": 704
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-麻溝台高校-普通",
+            "name": "麻溝台",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 763,
+            "benchmarks": {
+                  "border": 680,
+                  "chance60": 731,
+                  "chance80": 763
+            },
+            "source": "kanagaku"
+      },
+      {
+            "id": "csv-麻生高校-普通",
+            "name": "麻生",
+            "area": "普通",
+            "ratios": [
+                  5,
+                  5,
+                  0
+            ],
+            "target": 595,
+            "benchmarks": {
+                  "border": 531,
+                  "chance60": 563,
+                  "chance80": 595
+            },
+            "source": "kanagaku"
+      }
+];
+
+    const STORAGE_KEY = "kanagawa-highschool-sim-v1";
+    const BASE_SCHOOL_IDS = new Set(BASE_SCHOOLS.map((school) => school.id));
+    const LEGACY_SEEDED_IDS = new Set([
+      "yokohama-suiran", "shonan", "kawawa", "kibogaoka", "yokohama-midorigaoka",
+      "hakuyo", "tama", "atsugi", "sagamihara", "yamato", "hiratsuka-konanko",
+      "odawara", "yokosuka", "koryo", "kanagawa-sogo", "kamakura",
+      "chigasaki-hokuryo", "yokohama-hiranuma", "ichigao", "kohoku"
+    ]);
+    const state = {
+      schools: structuredClone(BASE_SCHOOLS),
+      selectedId: "kawawa",
+      useSpecial: false,
+      deletedSchoolIds: new Set(),
+      regionFilter: "all",
+      comparisonIds: new Set(),
+      schoolListMode: "all"
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const fields = {
+      regionSelect: $("regionSelect"),
+      schoolSelect: $("schoolSelect"),
+      schoolNameInput: $("schoolNameInput"),
+      schoolAreaInput: $("schoolAreaInput"),
+      newSchoolNameInput: $("newSchoolNameInput"),
+      newSchoolAreaInput: $("newSchoolAreaInput"),
+      borderInput: $("borderInput"),
+      chance60Input: $("chance60Input"),
+      targetInput: $("targetInput"),
+      goalSelect: $("goalSelect"),
+      grade2: $("grade2"),
+      grade3: $("grade3"),
+      special: $("special"),
+      specialToggle: $("specialToggle"),
+      ratioGrade: $("ratioGrade"),
+      ratioExam: $("ratioExam"),
+      ratioSpecial: $("ratioSpecial"),
+      focusEnglishMultiplier: $("focusEnglishMultiplier"),
+      focusBestPair: $("focusBestPair"),
+      focusBestMultiplier: $("focusBestMultiplier"),
+      schoolListMode: $("schoolListMode")
+    };
+
+    function clamp(value, min, max) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return min;
+      return Math.min(max, Math.max(min, n));
+    }
+
+    function round(value, digits = 0) {
+      const p = 10 ** digits;
+      return Math.round(value * p) / p;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function makeSchoolId(name) {
+      const base = name
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
+        .replace(/^-+|-+$/g, "") || "school";
+      let id = `custom-${base}`;
+      let index = 2;
+      while (state.schools.some((school) => school.id === id) || BASE_SCHOOL_IDS.has(id)) {
+        id = `custom-${base}-${index}`;
+        index += 1;
+      }
+      return id;
+    }
+
+    const REGION_ORDER = ["全エリア", "横浜", "川崎", "横須賀三浦", "湘南", "県央", "相模原", "県西", "その他"];
+    const REGION_NAME_MAP = {
+      横浜: ["みなと総合", "上矢部", "二俣川", "保土ケ谷", "元石川", "光陵", "城郷", "岸根", "川和", "市ケ尾", "市立戸塚", "市立東", "市立桜丘", "市立金沢", "希望ケ丘", "新栄", "新羽", "旭", "松陽", "柏陽", "横浜サイエンス", "横浜南陵", "横浜平沼", "横浜栄", "横浜桜陽", "横浜氷取沢", "横浜清陵", "横浜瀬谷", "横浜立野", "横浜緑ケ丘", "横浜緑園", "横浜翠嵐", "港北", "白山", "神奈川総合", "舞岡", "荏田", "金井", "霧が丘", "鶴見"],
+      川崎: ["住吉", "多摩", "大師", "川崎北", "市立幸", "市立橘", "市立高津", "新城", "生田東", "生田", "百合丘", "県立川崎", "菅", "麻生"],
+      横須賀三浦: ["三浦初声", "横須賀大津", "横須賀", "津久井浜", "追浜", "逗子葉山"],
+      湘南: ["七里ガ浜", "二宮", "大磯", "大船", "寒川", "平塚江南", "平塚湘風", "湘南台", "湘南", "茅ケ崎北陵", "茅ケ崎西浜", "茅ケ崎", "藤沢清流", "藤沢西", "鎌倉", "高浜", "鶴嶺"],
+      県央: ["厚木北", "厚木清南", "厚木王子", "厚木西", "厚木", "大和南", "大和西", "大和", "座間", "愛川", "有馬", "海老名", "綾瀬西", "綾瀬"],
+      相模原: ["上溝南", "上溝", "上鶴間", "橋本", "津久井", "相模原城山", "相模原弥栄", "相模原", "相模田名", "麻溝台"],
+      県西: ["伊勢原", "伊志田", "小田原東", "小田原", "山北", "秦野曽屋", "秦野", "西湘", "足柄"]
+    };
+
+    function getSchoolRegion(school) {
+      if (school.region) return school.region;
+      const name = school.name || "";
+      for (const [region, names] of Object.entries(REGION_NAME_MAP)) {
+        if (names.some((prefix) => name.startsWith(prefix))) return region;
+      }
+      return school.source === "kanagaku" ? "その他" : (school.area || "その他");
+    }
+
+    function getFilteredSchools() {
+      if (state.regionFilter === "all") return state.schools;
+      return state.schools.filter((school) => getSchoolRegion(school) === state.regionFilter);
+    }
+
+    function normalizeExamFocus(focus) {
+      if (!focus) return undefined;
+      const englishMultiplier = clamp(focus.englishMultiplier ?? 1, 1, 2);
+      const bestMultiplier = clamp(focus.bestMultiplier ?? 1, 1, 2);
+      const bestOf = Array.isArray(focus.bestOf) ? focus.bestOf : [];
+      const normalized = {};
+      if (englishMultiplier > 1) normalized.englishMultiplier = englishMultiplier;
+      if (bestMultiplier > 1 && bestOf.length > 0) {
+        normalized.bestOf = bestOf;
+        normalized.bestMultiplier = bestMultiplier;
+      }
+      return Object.keys(normalized).length ? normalized : undefined;
+    }
+
+    function getExamFocusFromInputs() {
+      return normalizeExamFocus({
+        englishMultiplier: clamp(fields.focusEnglishMultiplier.value, 1, 2),
+        bestOf: fields.focusBestPair.value === "mathJapanese" ? ["数学", "国語"] : [],
+        bestMultiplier: clamp(fields.focusBestMultiplier.value, 1, 2)
+      });
+    }
+
+    function normalizeBenchmarks(school) {
+      const target = clamp(school?.target ?? school?.benchmarks?.chance80 ?? 0, 0, 1000);
+      const border = clamp(school?.benchmarks?.border ?? school?.latest_s1_border_score ?? Math.max(0, target - 60), 0, 1000);
+      const chance60 = clamp(school?.benchmarks?.chance60 ?? Math.max(border, target - 30), 0, 1000);
+      const chance80 = clamp(school?.benchmarks?.chance80 ?? target, 0, 1000);
+      return { border, chance60, chance80 };
+    }
+
+    function getBenchmarksFromInputs() {
+      return {
+        border: clamp(fields.borderInput.value, 0, 1000),
+        chance60: clamp(fields.chance60Input.value, 0, 1000),
+        chance80: clamp(fields.targetInput.value, 0, 1000)
+      };
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!saved) return;
+        if (Array.isArray(saved.deletedSchoolIds)) {
+          state.deletedSchoolIds = new Set(saved.deletedSchoolIds);
+        }
+        if (Array.isArray(saved.schools)) {
+          const savedById = new Map(saved.schools.map((school) => [school.id, school]));
+          const normalizeSchool = (base, savedSchool = base) => {
+            const shouldUseBaseCriteria = base.source === "kanagaku" && savedSchool.source !== "kanagaku";
+            const criteriaSource = shouldUseBaseCriteria ? base : savedSchool;
+            const savedRatios = Array.isArray(criteriaSource.ratios) ? criteriaSource.ratios : base.ratios;
+            const usesOldOfunaDefault = base.id === "ofuna" &&
+              Number(criteriaSource.target) === 620 &&
+              Number(savedRatios[0]) === 4 &&
+              Number(savedRatios[1]) === 6 &&
+              Number(savedRatios[2]) === 0;
+            return {
+              ...base,
+              name: String(savedSchool.name || base.name || "名称未設定").trim() || "名称未設定",
+              area: String(savedSchool.area || base.area || "未設定").trim() || "未設定",
+              examFocus: normalizeExamFocus(criteriaSource.examFocus || base.examFocus),
+              target: usesOldOfunaDefault ? base.target : clamp(criteriaSource.target ?? base.target, 0, 1000),
+              benchmarks: normalizeBenchmarks(usesOldOfunaDefault ? base : { ...base, ...criteriaSource }),
+              ratios: usesOldOfunaDefault ? base.ratios : [
+                clamp(savedRatios[0], 0, 10),
+                clamp(savedRatios[1], 0, 10),
+                clamp(savedRatios[2], 0, 10)
+              ]
+            };
+          };
+          const baseSchools = BASE_SCHOOLS
+            .filter((base) => !state.deletedSchoolIds.has(base.id))
+            .map((base) => normalizeSchool(base, savedById.get(base.id)));
+          const customSchools = saved.schools
+            .filter((school) => !BASE_SCHOOL_IDS.has(school.id) && !LEGACY_SEEDED_IDS.has(school.id) && !state.deletedSchoolIds.has(school.id))
+            .map((school) => normalizeSchool(school));
+          state.schools = [...baseSchools, ...customSchools];
+        }
+        if (state.schools.length === 0) {
+          state.deletedSchoolIds.clear();
+          state.schools = structuredClone(BASE_SCHOOLS);
+        }
+        if (saved.selectedId && state.schools.some((s) => s.id === saved.selectedId)) {
+          state.selectedId = saved.selectedId;
+        } else {
+          state.selectedId = state.schools[0].id;
+        }
+        if (typeof saved.useSpecial === "boolean") state.useSpecial = saved.useSpecial;
+        if (Array.isArray(saved.comparisonIds)) {
+          state.comparisonIds = new Set(saved.comparisonIds.filter((id) => state.schools.some((school) => school.id === id)));
+        }
+        if (saved.schoolListMode === "comparison") state.schoolListMode = "comparison";
+        if (saved.regionFilter && (saved.regionFilter === "all" || state.schools.some((school) => getSchoolRegion(school) === saved.regionFilter))) {
+          state.regionFilter = saved.regionFilter;
+        }
+        if (saved.inputs) {
+          for (const [id, value] of Object.entries(saved.inputs)) {
+            const el = $(id);
+            if (el) el.value = value;
+          }
+        }
+        if (!["border", "chance60", "chance80"].includes(fields.goalSelect.value)) {
+          fields.goalSelect.value = "chance80";
+        }
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function saveState() {
+      const inputIds = ["borderInput", "chance60Input", "targetInput", "goalSelect", "grade2", "grade3", "special", "ratioGrade", "ratioExam", "ratioSpecial"];
+      document.querySelectorAll(".subject").forEach((el, index) => inputIds.push(`subject-${index}`));
+      const subjects = Array.from(document.querySelectorAll(".subject")).map((el) => el.value);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        schools: state.schools,
+        selectedId: state.selectedId,
+        useSpecial: state.useSpecial,
+        deletedSchoolIds: Array.from(state.deletedSchoolIds),
+        regionFilter: state.regionFilter,
+        comparisonIds: Array.from(state.comparisonIds),
+        schoolListMode: state.schoolListMode,
+        inputs: {
+          borderInput: fields.borderInput.value,
+          chance60Input: fields.chance60Input.value,
+          targetInput: fields.targetInput.value,
+          goalSelect: fields.goalSelect.value,
+          grade2: fields.grade2.value,
+          grade3: fields.grade3.value,
+          special: fields.special.value,
+          ratioGrade: fields.ratioGrade.value,
+          ratioExam: fields.ratioExam.value,
+          ratioSpecial: fields.ratioSpecial.value,
+          subjectValues: subjects
+        }
+      }));
+    }
+
+    function getSelectedSchool() {
+      return state.schools.find((school) => school.id === state.selectedId) || state.schools[0];
+    }
+
+    function fillRegionSelect() {
+      const regions = [...new Set(state.schools.map(getSchoolRegion))];
+      const ordered = REGION_ORDER
+        .filter((region) => region === "全エリア" || regions.includes(region))
+        .map((region) => region === "全エリア" ? { value: "all", label: "全エリア" } : { value: region, label: region });
+      fields.regionSelect.innerHTML = ordered.map((region) =>
+        `<option value="${escapeHtml(region.value)}">${escapeHtml(region.label)}</option>`
+      ).join("");
+      fields.regionSelect.value = state.regionFilter;
+    }
+
+    function fillSchoolSelect() {
+      const filtered = getFilteredSchools();
+      if (!filtered.some((school) => school.id === state.selectedId) && filtered.length > 0) {
+        state.selectedId = filtered[0].id;
+      }
+      fields.schoolSelect.innerHTML = filtered.map((school) =>
+        `<option value="${escapeHtml(school.id)}">${escapeHtml(school.name)}（${escapeHtml(getSchoolRegion(school))}）</option>`
+      ).join("");
+      fields.schoolSelect.value = state.selectedId;
+    }
+
+    function applySchoolToInputs() {
+      const school = getSelectedSchool();
+      fields.schoolNameInput.value = school.name;
+      fields.schoolAreaInput.value = getSchoolRegion(school);
+      const benchmarks = normalizeBenchmarks(school);
+      fields.borderInput.value = benchmarks.border;
+      fields.chance60Input.value = benchmarks.chance60;
+      fields.targetInput.value = benchmarks.chance80;
+      fields.ratioGrade.value = school.ratios[0];
+      fields.ratioExam.value = school.ratios[1];
+      fields.ratioSpecial.value = school.ratios[2];
+      const focus = normalizeExamFocus(school.examFocus);
+      fields.focusEnglishMultiplier.value = focus?.englishMultiplier || 1;
+      fields.focusBestPair.value = focus?.bestOf?.includes("数学") && focus?.bestOf?.includes("国語") ? "mathJapanese" : "none";
+      fields.focusBestMultiplier.value = focus?.bestMultiplier || 1;
+      state.useSpecial = school.ratios[2] > 0;
+      updateSpecialToggle();
+    }
+
+    function getInputs() {
+      const subjectEls = Array.from(document.querySelectorAll(".subject"));
+      const subjects = subjectEls.map((el) => ({
+        name: el.dataset.subject,
+        score: clamp(el.value, 0, 100)
+      }));
+      const ratios = [
+        clamp(fields.ratioGrade.value, 0, 10),
+        clamp(fields.ratioExam.value, 0, 10),
+        state.useSpecial ? clamp(fields.ratioSpecial.value, 0, 10) : 0
+      ];
+      return {
+        grade2: clamp(fields.grade2.value, 0, 45),
+        grade3: clamp(fields.grade3.value, 0, 45),
+        subjects,
+        special: state.useSpecial ? clamp(fields.special.value, 0, 100) : 0,
+        benchmarks: getBenchmarksFromInputs(),
+        targetMode: fields.goalSelect.value,
+        ratios,
+        examFocus: getExamFocusFromInputs()
+      };
+    }
+
+    function calculateExam(subjects, school) {
+      const byName = new Map(subjects.map((subject) => [subject.name, subject.score]));
+      const baseRaw = subjects.reduce((sum, subject) => sum + subject.score, 0);
+      const focus = school?.examFocus;
+      let raw = baseRaw;
+      let max = 500;
+      const notes = [];
+
+      if (focus?.englishMultiplier) {
+        const multiplier = Number(focus.englishMultiplier);
+        if (Number.isFinite(multiplier) && multiplier > 1) {
+          raw += (byName.get("英語") || 0) * (multiplier - 1);
+          max += 100 * (multiplier - 1);
+          notes.push(`英語${multiplier}倍`);
+        }
+      }
+
+      if (Array.isArray(focus?.bestOf) && focus.bestMultiplier) {
+        const multiplier = Number(focus.bestMultiplier);
+        if (Number.isFinite(multiplier) && multiplier > 1) {
+          const candidates = focus.bestOf.map((name) => ({
+            name,
+            score: byName.get(name) || 0
+          }));
+          const best = candidates.reduce((current, candidate) =>
+            candidate.score > current.score ? candidate : current,
+            candidates[0] || { name: "", score: 0 }
+          );
+          raw += best.score * (multiplier - 1);
+          max += 100 * (multiplier - 1);
+          notes.push(`${focus.bestOf.join("/") }の高い方${multiplier}倍`);
+        }
+      }
+
+      return {
+        raw,
+        max,
+        baseRaw,
+        focusText: notes.join(" + ")
+      };
+    }
+
+    function calculate(input, overrideSchool) {
+      const school = overrideSchool || { ...getSelectedSchool(), examFocus: input.examFocus };
+      const ratios = overrideSchool ? overrideSchool.ratios : input.ratios;
+      const useSpecialForCalc = ratios[2] > 0;
+      const gradeRaw = input.grade2 + input.grade3 * 2;
+      const exam = calculateExam(input.subjects, school);
+      const examRaw = exam.raw;
+      const specialRaw = useSpecialForCalc ? input.special : 0;
+      const gradeS = (gradeRaw / 135) * 100 * ratios[0];
+      const examS = (examRaw / exam.max) * 100 * ratios[1];
+      const specialS = (specialRaw / 100) * 100 * ratios[2];
+      const maxS = (ratios[0] + ratios[1] + ratios[2]) * 100 || 1000;
+      const benchmarks = overrideSchool ? normalizeBenchmarks(overrideSchool) : input.benchmarks;
+      const targetMode = input.targetMode === "border" || input.targetMode === "chance60" || input.targetMode === "chance80"
+        ? input.targetMode
+        : "chance80";
+      const target = benchmarks.chance80;
+      const activeTarget = benchmarks[targetMode] ?? benchmarks.chance80;
+      const score = gradeS + examS + specialS;
+      const gap = score - activeTarget;
+      return {
+        gradeRaw,
+        examRaw,
+        examMax: exam.max,
+        examBaseRaw: exam.baseRaw,
+        examFocusText: exam.focusText,
+        specialRaw,
+        gradeS,
+        examS,
+        specialS,
+        score,
+        maxS,
+        target,
+        benchmarks,
+        activeTarget,
+        targetMode,
+        gap,
+        ratios
+      };
+    }
+
+    function statusFor(score, benchmarks) {
+      if (score >= benchmarks.chance80) return { label: "80%圏", cls: "safe" };
+      if (score >= benchmarks.chance60) return { label: "60%圏", cls: "pass" };
+      if (score >= benchmarks.border) return { label: "ボーダー圏", cls: "reach" };
+      return { label: "要強化", cls: "risk" };
+    }
+
+    function setPct(el, pct) {
+      el.style.left = `${Math.min(100, Math.max(0, pct))}%`;
+    }
+
+    function improvementPlans(input, result) {
+      const need = Math.max(0, result.activeTarget - result.score);
+      const examWeight = result.ratios[1] * 100 / result.examMax;
+      const gradeWeight = result.ratios[0] * 100 / 135;
+      const specialWeight = result.ratios[2];
+      const remainingExam = Math.max(0, result.examMax - result.examRaw);
+      const remainingGrade = Math.max(0, 135 - result.gradeRaw);
+      const remainingSpecial = Math.max(0, 100 - result.specialRaw);
+
+      const examNeed = examWeight > 0 ? Math.ceil(need / examWeight) : 0;
+      const gradeNeed = gradeWeight > 0 ? Math.ceil(need / gradeWeight) : 0;
+      const specialNeed = specialWeight > 0 ? Math.ceil(need / specialWeight) : 0;
+
+      let remaining = need;
+      const mixed = { exam: 0, grade: 0, special: 0 };
+      if (remaining > 0) {
+        mixed.exam = Math.min(remainingExam, Math.ceil((remaining * .58) / Math.max(examWeight, .01)));
+        remaining -= mixed.exam * examWeight;
+        mixed.grade = Math.min(remainingGrade, Math.ceil((Math.max(0, remaining) * .68) / Math.max(gradeWeight, .01)));
+        remaining -= mixed.grade * gradeWeight;
+        if (result.ratios[2] > 0) {
+          mixed.special = Math.min(remainingSpecial, Math.ceil(Math.max(0, remaining) / Math.max(specialWeight, .01)));
+          remaining -= mixed.special * specialWeight;
+        }
+        if (remaining > 0 && mixed.exam < remainingExam) {
+          const add = Math.min(remainingExam - mixed.exam, Math.ceil(remaining / Math.max(examWeight, .01)));
+          mixed.exam += add;
+          remaining -= add * examWeight;
+        }
+      }
+
+      return { need, examNeed, gradeNeed, specialNeed, mixed, remaining, remainingExam, remainingGrade, remainingSpecial };
+    }
+
+    function render() {
+      const input = getInputs();
+      const school = getSelectedSchool();
+      const result = calculate(input);
+      const lineGap = result.score - result.benchmarks.chance80;
+      const status = statusFor(result.score, result.benchmarks);
+      const plans = improvementPlans(input, result);
+      const targetLabel = result.targetMode === "border" ? "ボーダー" : result.targetMode === "chance60" ? "60%" : "80%";
+
+      $("schoolName").textContent = school.name;
+      $("ratioText").textContent = `${result.ratios[0]}:${result.ratios[1]}:${result.ratios[2]}`;
+      const focusText = result.examFocusText ? ` / ${result.examFocusText}` : "";
+      $("formulaText").textContent = `内申 ${result.ratios[0]} / 入試 ${result.ratios[1]} / 特色 ${result.ratios[2]}${focusText}　目標 ${targetLabel} ${round(result.activeTarget)}S`;
+      $("statusBadge").textContent = status.label;
+      $("statusBadge").className = `status ${status.cls}`;
+      $("scoreText").textContent = round(result.score);
+      $("scoreFraction").textContent = `${round(result.score)}/${round(result.maxS)}`;
+      $("gapText").textContent = result.gap >= 0 ? `目標まで +${round(result.gap)}S` : `目標まで ${round(result.gap)}S`;
+      $("gradeRawText").textContent = round(result.gradeRaw);
+      $("examRawText").textContent = round(result.examBaseRaw);
+      $("examMaxText").textContent = 500;
+      $("examFocusScoreText").textContent = result.examMax > 500
+        ? `重点後 ${round(result.examRaw)} / ${round(result.examMax)}`
+        : "";
+      $("specialRawText").textContent = round(result.specialRaw);
+      $("gradeScore").textContent = round(result.gradeS, 1);
+      $("examScore").textContent = round(result.examS, 1);
+      $("specialScore").textContent = round(result.specialS, 1);
+
+      setPct($("borderMark"), result.benchmarks.border / result.maxS * 100);
+      setPct($("chance60Mark"), result.benchmarks.chance60 / result.maxS * 100);
+      setPct($("chance80Mark"), result.benchmarks.chance80 / result.maxS * 100);
+      setPct($("currentMark"), result.score / result.maxS * 100);
+      const gauge = document.querySelector(".gauge");
+      gauge.style.setProperty("--border-pct", `${Math.min(100, Math.max(0, result.benchmarks.border / result.maxS * 100))}%`);
+      gauge.style.setProperty("--chance60-pct", `${Math.min(100, Math.max(0, result.benchmarks.chance60 / result.maxS * 100))}%`);
+      gauge.style.setProperty("--chance80-pct", `${Math.min(100, Math.max(0, result.benchmarks.chance80 / result.maxS * 100))}%`);
+      $("borderLegend").textContent = `ボーダー ${round(result.benchmarks.border)}`;
+      $("chance60Legend").textContent = `60% ${round(result.benchmarks.chance60)}`;
+      $("chance80Legend").textContent = `80% ${round(result.benchmarks.chance80)}`;
+
+      if (plans.need <= 0) {
+        $("examNeed").textContent = "OK";
+        $("examNeedText").textContent = `${targetLabel}目安を上回っています。目標を切り替えると別ラインでも確認できます。`;
+        $("gradeNeed").textContent = "OK";
+        $("gradeNeedText").textContent = "内申は現在の入力で目標に届いています。";
+        $("mixedNeed").textContent = `+${round(lineGap)}S`;
+        $("mixedNeedText").textContent = "直近の弱い科目を底上げすると安全圏に近づきます。";
+      } else {
+        $("examNeed").textContent = `+${Math.min(plans.examNeed, plans.remainingExam)}点`;
+        $("examNeedText").textContent = plans.examNeed <= plans.remainingExam
+          ? `学力検査を換算であと${plans.examNeed}点伸ばすと目標に届きます。`
+          : `入試だけでは不足しやすいので内申・特色も合わせます。`;
+        $("gradeNeed").textContent = `+${Math.min(plans.gradeNeed, plans.remainingGrade)}`;
+        $("gradeNeedText").textContent = plans.gradeNeed <= plans.remainingGrade
+          ? `内申合計をあと${plans.gradeNeed}上げる計算です。`
+          : `内申だけでは届きにくい差です。入試の上積みが必要です。`;
+        const specialPart = result.ratios[2] > 0 ? `・特色+${plans.mixed.special}` : "";
+        $("mixedNeed").textContent = `-${round(plans.need)}S`;
+        $("mixedNeedText").textContent = `入試+${plans.mixed.exam}点・内申+${plans.mixed.grade}${specialPart}が近い配分です。`;
+      }
+
+      renderSchoolList(input);
+      renderSubjectList(input.subjects);
+      updateSpecialToggle();
+      saveState();
+    }
+
+    function renderSchoolList(input) {
+      const sourceSchools = state.schoolListMode === "comparison"
+        ? state.schools.filter((school) => state.comparisonIds.has(school.id))
+        : state.schools;
+      const rows = sourceSchools
+        .map((school) => ({ school, result: calculate(input, school) }))
+        .sort((a, b) => b.result.gap - a.result.gap)
+        .map(({ school, result }) => {
+          const gap = round(result.score - result.activeTarget);
+          const gapCls = gap >= 0 ? "ok" : gap >= -45 ? "mid" : "ng";
+          const pct = Math.min(100, Math.max(0, result.score / result.maxS * 100));
+          const checked = state.comparisonIds.has(school.id) ? "checked" : "";
+          return `
+            <div class="school-row">
+              <input class="compare-check" type="checkbox" data-compare="${escapeHtml(school.id)}" ${checked} aria-label="${escapeHtml(school.name)}を比較対象にする">
+              <button type="button" data-school="${school.id}">
+                <span class="row-title">${escapeHtml(school.name)}</span>
+                <span class="row-sub">${escapeHtml(getSchoolRegion(school))} / ${school.ratios.join(":")} / B${round(result.benchmarks.border)} 60%${round(result.benchmarks.chance60)} 80%${round(result.benchmarks.chance80)}</span>
+                <span class="bar"><i style="--w:${pct}%"></i></span>
+              </button>
+              <span class="gap ${gapCls}">${gap >= 0 ? "+" : ""}${gap}</span>
+            </div>
+          `;
+        }).join("") || `<p class="note">比較対象にチェックした学校がありません。</p>`;
+      $("schoolList").innerHTML = rows;
+      $("schoolList").querySelectorAll(".compare-check").forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) {
+            state.comparisonIds.add(checkbox.dataset.compare);
+          } else {
+            state.comparisonIds.delete(checkbox.dataset.compare);
+          }
+          renderSchoolList(getInputs());
+          saveState();
+        });
+      });
+      $("schoolList").querySelectorAll("button[data-school]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedId = button.dataset.school;
+          state.regionFilter = getSchoolRegion(getSelectedSchool());
+          fillRegionSelect();
+          fillSchoolSelect();
+          fields.schoolSelect.value = state.selectedId;
+          applySchoolToInputs();
+          render();
+        });
+      });
+    }
+
+    function renderSubjectList(subjects) {
+      const rows = [...subjects]
+        .sort((a, b) => a.score - b.score)
+        .map((subject) => {
+          const room = 100 - subject.score;
+          const cls = subject.score >= 80 ? "ok" : subject.score >= 65 ? "mid" : "ng";
+          return `
+            <div class="subject-row">
+              <div>
+                <span class="row-title">${subject.name}</span>
+                <span class="row-sub">伸びしろ ${room}点</span>
+                <span class="bar"><i style="--w:${subject.score}%"></i></span>
+              </div>
+              <span class="gap ${cls}">${subject.score}</span>
+            </div>
+          `;
+        }).join("");
+      $("subjectList").innerHTML = rows;
+    }
+
+    function updateSpecialToggle() {
+      fields.specialToggle.classList.toggle("on", state.useSpecial);
+      fields.specialToggle.setAttribute("aria-pressed", String(state.useSpecial));
+      fields.special.disabled = !state.useSpecial;
+      fields.ratioSpecial.disabled = !state.useSpecial;
+    }
+
+    function saveCurrentSchool() {
+      const school = getSelectedSchool();
+      school.name = fields.schoolNameInput.value.trim() || school.name;
+      school.area = fields.schoolAreaInput.value.trim() || "未設定";
+      school.benchmarks = getBenchmarksFromInputs();
+      school.target = school.benchmarks.chance80;
+      school.ratios = [
+        clamp(fields.ratioGrade.value, 0, 10),
+        clamp(fields.ratioExam.value, 0, 10),
+        state.useSpecial ? clamp(fields.ratioSpecial.value, 0, 10) : 0
+      ];
+      school.examFocus = getExamFocusFromInputs();
+      fillRegionSelect();
+      fillSchoolSelect();
+      fields.schoolSelect.value = state.selectedId;
+      render();
+    }
+
+    function addSchool() {
+      const name = fields.newSchoolNameInput.value.trim();
+      if (!name) {
+        fields.newSchoolNameInput.focus();
+        return;
+      }
+      const area = fields.newSchoolAreaInput.value.trim() || fields.schoolAreaInput.value.trim() || "カスタム";
+      const newSchool = {
+        id: makeSchoolId(name),
+        name,
+        area,
+        benchmarks: getBenchmarksFromInputs(),
+        target: getBenchmarksFromInputs().chance80,
+        ratios: [
+          clamp(fields.ratioGrade.value, 0, 10),
+          clamp(fields.ratioExam.value, 0, 10),
+          state.useSpecial ? clamp(fields.ratioSpecial.value, 0, 10) : 0
+        ],
+        examFocus: getExamFocusFromInputs()
+      };
+      state.schools.push(newSchool);
+      state.selectedId = newSchool.id;
+      state.regionFilter = getSchoolRegion(newSchool);
+      fillRegionSelect();
+      fillSchoolSelect();
+      applySchoolToInputs();
+      fields.newSchoolNameInput.value = "";
+      fields.newSchoolAreaInput.value = "";
+      render();
+    }
+
+    function deleteCurrentSchool() {
+      if (state.schools.length <= 1) return;
+      const school = getSelectedSchool();
+      if (!window.confirm(`${school.name}を学校リストから削除しますか？`)) return;
+      if (BASE_SCHOOL_IDS.has(school.id)) {
+        state.deletedSchoolIds.add(school.id);
+      }
+      state.schools = state.schools.filter((item) => item.id !== school.id);
+      state.selectedId = state.schools[0].id;
+      state.regionFilter = "all";
+      fillRegionSelect();
+      fillSchoolSelect();
+      applySchoolToInputs();
+      render();
+    }
+
+    function restoreInitialSchools() {
+      state.deletedSchoolIds.clear();
+      const existingById = new Map(state.schools.map((school) => [school.id, school]));
+      const customSchools = state.schools.filter((school) => !BASE_SCHOOL_IDS.has(school.id));
+      state.schools = [
+        ...BASE_SCHOOLS.map((base) => existingById.get(base.id) || structuredClone(base)),
+        ...customSchools
+      ];
+      if (!state.schools.some((school) => school.id === state.selectedId)) {
+        state.selectedId = state.schools[0].id;
+      }
+      fillRegionSelect();
+      fillSchoolSelect();
+      applySchoolToInputs();
+      render();
+    }
+
+    function bindEvents() {
+      fields.regionSelect.addEventListener("change", () => {
+        state.regionFilter = fields.regionSelect.value;
+        fillSchoolSelect();
+        applySchoolToInputs();
+        render();
+      });
+      fields.schoolSelect.addEventListener("change", () => {
+        state.selectedId = fields.schoolSelect.value;
+        applySchoolToInputs();
+        render();
+      });
+      fields.schoolListMode.addEventListener("change", () => {
+        state.schoolListMode = fields.schoolListMode.value;
+        renderSchoolList(getInputs());
+        saveState();
+      });
+      fields.specialToggle.addEventListener("click", () => {
+        state.useSpecial = !state.useSpecial;
+        if (!state.useSpecial) fields.ratioSpecial.value = 0;
+        if (state.useSpecial && Number(fields.ratioSpecial.value) === 0) fields.ratioSpecial.value = 2;
+        render();
+      });
+      $("saveSchool").addEventListener("click", saveCurrentSchool);
+      $("addSchool").addEventListener("click", addSchool);
+      $("deleteSchool").addEventListener("click", deleteCurrentSchool);
+      $("restoreSchools").addEventListener("click", restoreInitialSchools);
+      $("resetAll").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.reload();
+      });
+      document.querySelectorAll("input, select").forEach((el) => {
+        el.addEventListener("input", render);
+        el.addEventListener("change", render);
+      });
+    }
+
+    function restoreSubjectValues() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        const values = saved?.inputs?.subjectValues;
+        if (!Array.isArray(values)) return;
+        document.querySelectorAll(".subject").forEach((el, index) => {
+          if (values[index] != null) el.value = values[index];
+        });
+      } catch {}
+    }
+
+    loadState();
+    fillRegionSelect();
+    fillSchoolSelect();
+    fields.schoolListMode.value = state.schoolListMode;
+    applySchoolToInputs();
+    restoreSubjectValues();
+    bindEvents();
+    render();
+  </script>
+</body>
+</html>
