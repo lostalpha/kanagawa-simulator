@@ -192,6 +192,23 @@
       display: none;
     }
 
+    .criteria-summary {
+      display: grid;
+      gap: 6px;
+      margin: 8px 0 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfb;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .criteria-summary b {
+      color: var(--ink);
+    }
+
     label {
       display: grid;
       gap: 6px;
@@ -809,6 +826,7 @@
             <h2>志望校</h2>
             <span class="mini" id="ratioText">比率</span>
           </div>
+          <div class="criteria-summary" id="criteriaSummary"></div>
           <label>
             エリア
             <select id="regionSelect"></select>
@@ -1041,8 +1059,8 @@
       <div class="panel benchmark-panel">
         <div class="section-title">
           <div>
-            <h2>全校 60%・80% 目安表 <span class="benchmark-count" id="benchmarkCount">0校</span></h2>
-            <p class="note">S値を学校ごとの比率で均等達成率に換算し、内申は2年+3年x2の9科平均、入試は5教科平均で表示します。</p>
+            <h2>全校 ボーダー・60%・80% 目安表 <span class="benchmark-count" id="benchmarkCount">0校</span></h2>
+            <p class="note">60%・80%の内申は元CSVの内申/135を使い、共通入試平均はS値と内申から逆算しています。ボーダー内申は60%/80%内申からの推定です。</p>
           </div>
         </div>
         <div class="benchmark-toolbar">
@@ -1068,8 +1086,14 @@
             <select id="benchmarkSortSelect">
               <option value="chance80S-desc">80%S 高い順</option>
               <option value="chance80S-asc">80%S 低い順</option>
+              <option value="borderS-desc">ボーダーS 高い順</option>
+              <option value="borderS-asc">ボーダーS 低い順</option>
               <option value="chance60S-desc">60%S 高い順</option>
               <option value="chance60S-asc">60%S 低い順</option>
+              <option value="borderGradeAvg-desc">ボーダー内申 高い順</option>
+              <option value="borderGradeAvg-asc">ボーダー内申 低い順</option>
+              <option value="borderExamAvg-desc">ボーダー入試 高い順</option>
+              <option value="borderExamAvg-asc">ボーダー入試 低い順</option>
               <option value="chance80GradeAvg-desc">80%内申 高い順</option>
               <option value="chance80GradeAvg-asc">80%内申 低い順</option>
               <option value="chance80ExamAvg-desc">80%入試 高い順</option>
@@ -1092,6 +1116,9 @@
                 <th><button type="button" data-benchmark-sort="name">学校</button></th>
                 <th><button type="button" data-benchmark-sort="region">エリア</button></th>
                 <th><button type="button" data-benchmark-sort="ratio">比率</button></th>
+                <th><button type="button" data-benchmark-sort="borderS">B S</button></th>
+                <th><button type="button" data-benchmark-sort="borderGradeAvg">B 内申平均</button></th>
+                <th><button type="button" data-benchmark-sort="borderExamAvg">B 入試平均</button></th>
                 <th><button type="button" data-benchmark-sort="chance60S">60% S</button></th>
                 <th><button type="button" data-benchmark-sort="chance60GradeAvg">60% 内申平均</button></th>
                 <th><button type="button" data-benchmark-sort="chance60ExamAvg">60% 入試平均</button></th>
@@ -1125,7 +1152,17 @@
                   "chance60": 731,
                   "chance80": 763
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 107,
+                        "hensachi": 56
+                  },
+                  "chance80": {
+                        "naishin": 110,
+                        "hensachi": 58
+                  }
+            }
       },
       {
             "id": "csv-三浦初声高校-普通",
@@ -1142,7 +1179,17 @@
                   "chance60": 454,
                   "chance80": 486
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 71,
+                        "hensachi": 37
+                  },
+                  "chance80": {
+                        "naishin": 76,
+                        "hensachi": 39
+                  }
+            }
       },
       {
             "id": "csv-上溝南高校-普通",
@@ -1159,7 +1206,17 @@
                   "chance60": 654,
                   "chance80": 686
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 101,
+                        "hensachi": 50
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 52
+                  }
+            }
       },
       {
             "id": "csv-上溝高校-普通",
@@ -1176,7 +1233,17 @@
                   "chance60": 612,
                   "chance80": 644
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 95,
+                        "hensachi": 48
+                  },
+                  "chance80": {
+                        "naishin": 99,
+                        "hensachi": 50
+                  }
+            }
       },
       {
             "id": "csv-上矢部高校-普通",
@@ -1193,7 +1260,17 @@
                   "chance60": 494,
                   "chance80": 526
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-上鶴間高校-普通",
@@ -1210,7 +1287,17 @@
                   "chance60": 479,
                   "chance80": 511
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 77,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 82,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-二俣川高校-普通",
@@ -1227,7 +1314,17 @@
                   "chance60": 523,
                   "chance80": 555
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 83,
+                        "hensachi": 43
+                  },
+                  "chance80": {
+                        "naishin": 88,
+                        "hensachi": 45
+                  }
+            }
       },
       {
             "id": "csv-二宮高校-普通",
@@ -1244,7 +1341,17 @@
                   "chance60": 444,
                   "chance80": 476
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 70,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 75,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-伊勢原高校-普通",
@@ -1261,7 +1368,17 @@
                   "chance60": 569,
                   "chance80": 601
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 91,
+                        "hensachi": 45
+                  },
+                  "chance80": {
+                        "naishin": 95,
+                        "hensachi": 47
+                  }
+            }
       },
       {
             "id": "csv-伊志田高校-普通",
@@ -1278,7 +1395,17 @@
                   "chance60": 676,
                   "chance80": 708
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 104,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 107,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-住吉高校-普通",
@@ -1295,7 +1422,17 @@
                   "chance60": 647,
                   "chance80": 679
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 96,
+                        "hensachi": 52
+                  },
+                  "chance80": {
+                        "naishin": 99,
+                        "hensachi": 54
+                  }
+            }
       },
       {
             "id": "csv-保土ケ谷高校-普通",
@@ -1312,7 +1449,17 @@
                   "chance60": 476,
                   "chance80": 508
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 71,
+                        "hensachi": 38
+                  },
+                  "chance80": {
+                        "naishin": 76,
+                        "hensachi": 40
+                  }
+            }
       },
       {
             "id": "csv-元石川高校-普通",
@@ -1329,7 +1476,17 @@
                   "chance60": 694,
                   "chance80": 726
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 100,
+                        "hensachi": 54
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 56
+                  }
+            }
       },
       {
             "id": "csv-光陵高校-普通",
@@ -1346,7 +1503,17 @@
                   "chance60": 848,
                   "chance80": 880
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 120,
+                        "hensachi": 63
+                  },
+                  "chance80": {
+                        "naishin": 125,
+                        "hensachi": 65
+                  }
+            }
       },
       {
             "id": "csv-厚木北高校-普通",
@@ -1363,7 +1530,17 @@
                   "chance60": 511,
                   "chance80": 543
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 80,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 85,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-厚木清南高校-普通",
@@ -1380,7 +1557,17 @@
                   "chance60": 439,
                   "chance80": 471
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 69,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 74,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-厚木王子高校-普通",
@@ -1397,7 +1584,17 @@
                   "chance60": 665,
                   "chance80": 697
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 101,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-厚木西高校-普通",
@@ -1414,7 +1611,17 @@
                   "chance60": 583,
                   "chance80": 615
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 90,
+                        "hensachi": 47
+                  },
+                  "chance80": {
+                        "naishin": 94,
+                        "hensachi": 49
+                  }
+            }
       },
       {
             "id": "csv-厚木高校-普通",
@@ -1431,7 +1638,17 @@
                   "chance60": 901,
                   "chance80": 933
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 126,
+                        "hensachi": 67
+                  },
+                  "chance80": {
+                        "naishin": 132,
+                        "hensachi": 69
+                  }
+            }
       },
       {
             "id": "csv-城郷高校-普通",
@@ -1448,7 +1665,17 @@
                   "chance60": 574,
                   "chance80": 606
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 90,
+                        "hensachi": 46
+                  },
+                  "chance80": {
+                        "naishin": 94,
+                        "hensachi": 48
+                  }
+            }
       },
       {
             "id": "csv-多摩高校-普通",
@@ -1465,7 +1692,17 @@
                   "chance60": 878,
                   "chance80": 910
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 121,
+                        "hensachi": 66
+                  },
+                  "chance80": {
+                        "naishin": 126,
+                        "hensachi": 68
+                  }
+            }
       },
       {
             "id": "csv-大和南高校-普通",
@@ -1482,7 +1719,17 @@
                   "chance60": 487,
                   "chance80": 519
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-大和西高校-普通",
@@ -1499,7 +1746,17 @@
                   "chance60": 623,
                   "chance80": 655
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 97,
+                        "hensachi": 50
+                  },
+                  "chance80": {
+                        "naishin": 100,
+                        "hensachi": 52
+                  }
+            }
       },
       {
             "id": "csv-大和高校-普通",
@@ -1516,7 +1773,17 @@
                   "chance60": 870,
                   "chance80": 902
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 121,
+                        "hensachi": 65
+                  },
+                  "chance80": {
+                        "naishin": 126,
+                        "hensachi": 67
+                  }
+            }
       },
       {
             "id": "csv-大師高校-普通",
@@ -1533,7 +1800,17 @@
                   "chance60": 380,
                   "chance80": 412
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 61,
+                        "hensachi": 34
+                  },
+                  "chance80": {
+                        "naishin": 67,
+                        "hensachi": 36
+                  }
+            }
       },
       {
             "id": "csv-大磯高校-普通",
@@ -1550,7 +1827,17 @@
                   "chance60": 638,
                   "chance80": 670
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 102,
+                        "hensachi": 50
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 52
+                  }
+            }
       },
       {
             "id": "ofuna",
@@ -1576,7 +1863,17 @@
                   ],
                   "bestMultiplier": 1.5
             },
-            "priorityDetail": "[学] 英(×1.5)国,数うち点数の高い １教科(×1.5)"
+            "priorityDetail": "[学] 英(×1.5)国,数うち点数の高い １教科(×1.5)",
+            "guides": {
+                  "chance60": {
+                        "naishin": 105,
+                        "hensachi": 55
+                  },
+                  "chance80": {
+                        "naishin": 108,
+                        "hensachi": 57
+                  }
+            }
       },
       {
             "id": "csv-寒川高校-普通",
@@ -1593,7 +1890,17 @@
                   "chance60": 378,
                   "chance80": 410
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 55,
+                        "hensachi": 34
+                  },
+                  "chance80": {
+                        "naishin": 60,
+                        "hensachi": 36
+                  }
+            }
       },
       {
             "id": "csv-小田原東高校-普通",
@@ -1610,7 +1917,17 @@
                   "chance60": 432,
                   "chance80": 464
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 68,
+                        "hensachi": 38
+                  },
+                  "chance80": {
+                        "naishin": 74,
+                        "hensachi": 40
+                  }
+            }
       },
       {
             "id": "csv-小田原高校-普通",
@@ -1627,7 +1944,17 @@
                   "chance60": 869,
                   "chance80": 901
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 124,
+                        "hensachi": 64
+                  },
+                  "chance80": {
+                        "naishin": 130,
+                        "hensachi": 66
+                  }
+            }
       },
       {
             "id": "csv-山北高校-普通",
@@ -1644,7 +1971,17 @@
                   "chance60": 429,
                   "chance80": 461
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 71,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 77,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-岸根高校-普通",
@@ -1661,7 +1998,17 @@
                   "chance60": 650,
                   "chance80": 682
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 94,
+                        "hensachi": 52
+                  },
+                  "chance80": {
+                        "naishin": 97,
+                        "hensachi": 54
+                  }
+            }
       },
       {
             "id": "csv-川和高校-普通",
@@ -1678,7 +2025,17 @@
                   "chance60": 887,
                   "chance80": 919
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 124,
+                        "hensachi": 66
+                  },
+                  "chance80": {
+                        "naishin": 129,
+                        "hensachi": 68
+                  }
+            }
       },
       {
             "id": "csv-川崎北高校-普通",
@@ -1695,7 +2052,17 @@
                   "chance60": 535,
                   "chance80": 567
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 86,
+                        "hensachi": 43
+                  },
+                  "chance80": {
+                        "naishin": 91,
+                        "hensachi": 45
+                  }
+            }
       },
       {
             "id": "csv-市ケ尾高校-普通",
@@ -1712,7 +2079,17 @@
                   "chance60": 782,
                   "chance80": 814
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 110,
+                        "hensachi": 59
+                  },
+                  "chance80": {
+                        "naishin": 114,
+                        "hensachi": 61
+                  }
+            }
       },
       {
             "id": "csv-市立幸高校-普通",
@@ -1729,7 +2106,17 @@
                   "chance60": 543,
                   "chance80": 575
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 86,
+                        "hensachi": 44
+                  },
+                  "chance80": {
+                        "naishin": 90,
+                        "hensachi": 46
+                  }
+            }
       },
       {
             "id": "csv-市立戸塚高校-一般",
@@ -1746,7 +2133,17 @@
                   "chance60": 765,
                   "chance80": 797
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 108,
+                        "hensachi": 58
+                  },
+                  "chance80": {
+                        "naishin": 112,
+                        "hensachi": 60
+                  }
+            }
       },
       {
             "id": "csv-市立戸塚高校-音楽",
@@ -1763,7 +2160,17 @@
                   "chance60": 665,
                   "chance80": 697
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 101,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-市立東高校-普通",
@@ -1784,7 +2191,17 @@
             "examFocus": {
                   "englishMultiplier": 1.5
             },
-            "priorityDetail": "[学] 英(×1.5)"
+            "priorityDetail": "[学] 英(×1.5)",
+            "guides": {
+                  "chance60": {
+                        "naishin": 106,
+                        "hensachi": 57
+                  },
+                  "chance80": {
+                        "naishin": 109,
+                        "hensachi": 59
+                  }
+            }
       },
       {
             "id": "csv-市立桜丘高校-普通",
@@ -1801,7 +2218,17 @@
                   "chance60": 776,
                   "chance80": 808
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 113,
+                        "hensachi": 59
+                  },
+                  "chance80": {
+                        "naishin": 117,
+                        "hensachi": 61
+                  }
+            }
       },
       {
             "id": "csv-市立橘高校-普通",
@@ -1818,7 +2245,17 @@
                   "chance60": 734,
                   "chance80": 766
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 108,
+                        "hensachi": 56
+                  },
+                  "chance80": {
+                        "naishin": 112,
+                        "hensachi": 58
+                  }
+            }
       },
       {
             "id": "csv-市立金沢高校-普通",
@@ -1839,7 +2276,17 @@
             "examFocus": {
                   "englishMultiplier": 1.5
             },
-            "priorityDetail": "[学] 英(×1.5),数(×1.2)"
+            "priorityDetail": "[学] 英(×1.5),数(×1.2)",
+            "guides": {
+                  "chance60": {
+                        "naishin": 115,
+                        "hensachi": 63
+                  },
+                  "chance80": {
+                        "naishin": 119,
+                        "hensachi": 65
+                  }
+            }
       },
       {
             "id": "csv-市立高津高校-普通",
@@ -1856,7 +2303,17 @@
                   "chance60": 636,
                   "chance80": 668
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 96,
+                        "hensachi": 50
+                  },
+                  "chance80": {
+                        "naishin": 99,
+                        "hensachi": 52
+                  }
+            }
       },
       {
             "id": "csv-希望ケ丘高校-普通",
@@ -1873,7 +2330,17 @@
                   "chance60": 860,
                   "chance80": 892
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 121,
+                        "hensachi": 64
+                  },
+                  "chance80": {
+                        "naishin": 126,
+                        "hensachi": 66
+                  }
+            }
       },
       {
             "id": "csv-平塚江南高校-普通",
@@ -1890,7 +2357,17 @@
                   "chance60": 823,
                   "chance80": 855
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 117,
+                        "hensachi": 62
+                  },
+                  "chance80": {
+                        "naishin": 122,
+                        "hensachi": 64
+                  }
+            }
       },
       {
             "id": "csv-平塚湘風高校-普通",
@@ -1907,7 +2384,17 @@
                   "chance60": 399,
                   "chance80": 431
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 60,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 65,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-座間高校-普通",
@@ -1924,7 +2411,17 @@
                   "chance60": 767,
                   "chance80": 799
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 111,
+                        "hensachi": 58
+                  },
+                  "chance80": {
+                        "naishin": 114,
+                        "hensachi": 60
+                  }
+            }
       },
       {
             "id": "csv-愛川高校-普通",
@@ -1941,7 +2438,17 @@
                   "chance60": 381,
                   "chance80": 413
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 59,
+                        "hensachi": 33
+                  },
+                  "chance80": {
+                        "naishin": 64,
+                        "hensachi": 35
+                  }
+            }
       },
       {
             "id": "csv-新城高校-普通",
@@ -1958,7 +2465,17 @@
                   "chance60": 826,
                   "chance80": 858
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 117,
+                        "hensachi": 61
+                  },
+                  "chance80": {
+                        "naishin": 121,
+                        "hensachi": 63
+                  }
+            }
       },
       {
             "id": "csv-新栄高校-普通",
@@ -1975,7 +2492,17 @@
                   "chance60": 501,
                   "chance80": 533
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 42
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 44
+                  }
+            }
       },
       {
             "id": "csv-新羽高校-普通",
@@ -1992,7 +2519,17 @@
                   "chance60": 503,
                   "chance80": 535
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 77,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 82,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-旭高校-普通",
@@ -2009,7 +2546,17 @@
                   "chance60": 523,
                   "chance80": 555
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 85,
+                        "hensachi": 42
+                  },
+                  "chance80": {
+                        "naishin": 90,
+                        "hensachi": 44
+                  }
+            }
       },
       {
             "id": "csv-有馬高校-普通",
@@ -2026,7 +2573,17 @@
                   "chance60": 589,
                   "chance80": 621
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 94,
+                        "hensachi": 46
+                  },
+                  "chance80": {
+                        "naishin": 98,
+                        "hensachi": 48
+                  }
+            }
       },
       {
             "id": "csv-松陽高校-普通",
@@ -2043,7 +2600,17 @@
                   "chance60": 737,
                   "chance80": 769
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 109,
+                        "hensachi": 56
+                  },
+                  "chance80": {
+                        "naishin": 113,
+                        "hensachi": 58
+                  }
+            }
       },
       {
             "id": "csv-柏陽高校-普通",
@@ -2060,7 +2627,17 @@
                   "chance60": 911,
                   "chance80": 943
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 125,
+                        "hensachi": 69
+                  },
+                  "chance80": {
+                        "naishin": 133,
+                        "hensachi": 71
+                  }
+            }
       },
       {
             "id": "csv-横浜サイエンス-理数",
@@ -2077,7 +2654,17 @@
                   "chance60": 897,
                   "chance80": 929
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 119,
+                        "hensachi": 69
+                  },
+                  "chance80": {
+                        "naishin": 127,
+                        "hensachi": 71
+                  }
+            }
       },
       {
             "id": "csv-横浜南陵高校-普通",
@@ -2094,7 +2681,17 @@
                   "chance60": 539,
                   "chance80": 571
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 85,
+                        "hensachi": 44
+                  },
+                  "chance80": {
+                        "naishin": 89,
+                        "hensachi": 46
+                  }
+            }
       },
       {
             "id": "csv-横浜平沼高校-普通",
@@ -2111,7 +2708,17 @@
                   "chance60": 839,
                   "chance80": 871
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 118,
+                        "hensachi": 62
+                  },
+                  "chance80": {
+                        "naishin": 123,
+                        "hensachi": 64
+                  }
+            }
       },
       {
             "id": "csv-横浜栄高校-普通",
@@ -2128,7 +2735,17 @@
                   "chance60": 685,
                   "chance80": 717
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 100,
+                        "hensachi": 54
+                  },
+                  "chance80": {
+                        "naishin": 103,
+                        "hensachi": 56
+                  }
+            }
       },
       {
             "id": "csv-横浜桜陽高校-普通",
@@ -2145,7 +2762,17 @@
                   "chance60": 435,
                   "chance80": 467
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 68,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 73,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-横浜氷取沢高校-普通",
@@ -2162,7 +2789,17 @@
                   "chance60": 606,
                   "chance80": 638
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 91,
+                        "hensachi": 50
+                  },
+                  "chance80": {
+                        "naishin": 93,
+                        "hensachi": 52
+                  }
+            }
       },
       {
             "id": "csv-横浜清陵高校-普通",
@@ -2179,7 +2816,17 @@
                   "chance60": 600,
                   "chance80": 632
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 93,
+                        "hensachi": 49
+                  },
+                  "chance80": {
+                        "naishin": 95,
+                        "hensachi": 51
+                  }
+            }
       },
       {
             "id": "csv-横浜瀬谷高校-普通",
@@ -2196,7 +2843,17 @@
                   "chance60": 650,
                   "chance80": 682
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 97,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 100,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-横浜立野高校-普通",
@@ -2213,7 +2870,17 @@
                   "chance60": 585,
                   "chance80": 617
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 93,
+                        "hensachi": 46
+                  },
+                  "chance80": {
+                        "naishin": 97,
+                        "hensachi": 48
+                  }
+            }
       },
       {
             "id": "csv-横浜緑ケ丘高校-普通",
@@ -2230,7 +2897,17 @@
                   "chance60": 895,
                   "chance80": 927
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 124,
+                        "hensachi": 67
+                  },
+                  "chance80": {
+                        "naishin": 130,
+                        "hensachi": 69
+                  }
+            }
       },
       {
             "id": "csv-横浜緑園高校-普通",
@@ -2247,7 +2924,17 @@
                   "chance60": 487,
                   "chance80": 519
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-横浜翠嵐高校-普通",
@@ -2264,7 +2951,17 @@
                   "chance60": 928,
                   "chance80": 960
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 124,
+                        "hensachi": 72
+                  },
+                  "chance80": {
+                        "naishin": 131,
+                        "hensachi": 75
+                  }
+            }
       },
       {
             "id": "csv-横須賀大津高校-普通",
@@ -2285,7 +2982,17 @@
             "examFocus": {
                   "englishMultiplier": 1.2
             },
-            "priorityDetail": "[学] 英(×1.2)"
+            "priorityDetail": "[学] 英(×1.2)",
+            "guides": {
+                  "chance60": {
+                        "naishin": 106,
+                        "hensachi": 53
+                  },
+                  "chance80": {
+                        "naishin": 109,
+                        "hensachi": 55
+                  }
+            }
       },
       {
             "id": "csv-横須賀高校-普通",
@@ -2302,7 +3009,17 @@
                   "chance60": 850,
                   "chance80": 882
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 119,
+                        "hensachi": 64
+                  },
+                  "chance80": {
+                        "naishin": 124,
+                        "hensachi": 66
+                  }
+            }
       },
       {
             "id": "csv-橋本高校-普通",
@@ -2319,7 +3036,17 @@
                   "chance60": 598,
                   "chance80": 630
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 94,
+                        "hensachi": 47
+                  },
+                  "chance80": {
+                        "naishin": 98,
+                        "hensachi": 49
+                  }
+            }
       },
       {
             "id": "csv-津久井浜高校-普通",
@@ -2336,7 +3063,17 @@
                   "chance60": 576,
                   "chance80": 608
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 93,
+                        "hensachi": 45
+                  },
+                  "chance80": {
+                        "naishin": 97,
+                        "hensachi": 47
+                  }
+            }
       },
       {
             "id": "csv-津久井高校-普通",
@@ -2353,7 +3090,17 @@
                   "chance60": 394,
                   "chance80": 422
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 55,
+                        "hensachi": 35
+                  },
+                  "chance80": {
+                        "naishin": 59,
+                        "hensachi": 37
+                  }
+            }
       },
       {
             "id": "csv-海老名高校-普通",
@@ -2370,7 +3117,17 @@
                   "chance60": 793,
                   "chance80": 825
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 115,
+                        "hensachi": 60
+                  },
+                  "chance80": {
+                        "naishin": 120,
+                        "hensachi": 62
+                  }
+            }
       },
       {
             "id": "csv-港北高校-普通",
@@ -2387,7 +3144,17 @@
                   "chance60": 726,
                   "chance80": 758
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 103,
+                        "hensachi": 56
+                  },
+                  "chance80": {
+                        "naishin": 107,
+                        "hensachi": 58
+                  }
+            }
       },
       {
             "id": "csv-湘南台高校-普通",
@@ -2404,7 +3171,17 @@
                   "chance60": 684,
                   "chance80": 716
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 104,
+                        "hensachi": 53
+                  },
+                  "chance80": {
+                        "naishin": 106,
+                        "hensachi": 55
+                  }
+            }
       },
       {
             "id": "csv-湘南高校-普通",
@@ -2421,7 +3198,17 @@
                   "chance60": 937,
                   "chance80": 969
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 129,
+                        "hensachi": 71
+                  },
+                  "chance80": {
+                        "naishin": 135,
+                        "hensachi": 74
+                  }
+            }
       },
       {
             "id": "csv-生田東高校-普通",
@@ -2438,7 +3225,17 @@
                   "chance60": 467,
                   "chance80": 499
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-生田高校-普通",
@@ -2455,7 +3252,17 @@
                   "chance60": 751,
                   "chance80": 783
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 107,
+                        "hensachi": 57
+                  },
+                  "chance80": {
+                        "naishin": 110,
+                        "hensachi": 59
+                  }
+            }
       },
       {
             "id": "csv-白山高校-普通",
@@ -2472,7 +3279,17 @@
                   "chance60": 456,
                   "chance80": 488
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 68,
+                        "hensachi": 37
+                  },
+                  "chance80": {
+                        "naishin": 73,
+                        "hensachi": 39
+                  }
+            }
       },
       {
             "id": "csv-百合丘高校-普通",
@@ -2489,7 +3306,17 @@
                   "chance60": 527,
                   "chance80": 559
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 84,
+                        "hensachi": 43
+                  },
+                  "chance80": {
+                        "naishin": 89,
+                        "hensachi": 45
+                  }
+            }
       },
       {
             "id": "csv-相模原城山高校-普通",
@@ -2506,7 +3333,17 @@
                   "chance60": 489,
                   "chance80": 521
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 75,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 80,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-相模原弥栄高校-普通",
@@ -2523,7 +3360,17 @@
                   "chance60": 784,
                   "chance80": 816
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 113,
+                        "hensachi": 58
+                  },
+                  "chance80": {
+                        "naishin": 117,
+                        "hensachi": 60
+                  }
+            }
       },
       {
             "id": "csv-相模原高校-普通",
@@ -2540,7 +3387,17 @@
                   "chance60": 870,
                   "chance80": 902
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 120,
+                        "hensachi": 65
+                  },
+                  "chance80": {
+                        "naishin": 125,
+                        "hensachi": 67
+                  }
+            }
       },
       {
             "id": "csv-相模田名高校-普通",
@@ -2557,7 +3414,17 @@
                   "chance60": 521,
                   "chance80": 553
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 78,
+                        "hensachi": 40
+                  },
+                  "chance80": {
+                        "naishin": 83,
+                        "hensachi": 42
+                  }
+            }
       },
       {
             "id": "csv-県立川崎高校-普通",
@@ -2574,7 +3441,17 @@
                   "chance60": 546,
                   "chance80": 578
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 87,
+                        "hensachi": 44
+                  },
+                  "chance80": {
+                        "naishin": 91,
+                        "hensachi": 46
+                  }
+            }
       },
       {
             "id": "csv-神奈川総合高校-個性",
@@ -2591,7 +3468,17 @@
                   "chance60": 865,
                   "chance80": 897
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 121,
+                        "hensachi": 65
+                  },
+                  "chance80": {
+                        "naishin": 128,
+                        "hensachi": 67
+                  }
+            }
       },
       {
             "id": "csv-神奈川総合高校-国際",
@@ -2608,7 +3495,17 @@
                   "chance60": 833,
                   "chance80": 863
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 115,
+                        "hensachi": 63
+                  },
+                  "chance80": {
+                        "naishin": 119,
+                        "hensachi": 65
+                  }
+            }
       },
       {
             "id": "csv-秦野曽屋高校-普通",
@@ -2625,7 +3522,17 @@
                   "chance60": 552,
                   "chance80": 584
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 88,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 93,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-秦野高校-普通",
@@ -2642,7 +3549,17 @@
                   "chance60": 709,
                   "chance80": 741
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 108,
+                        "hensachi": 54
+                  },
+                  "chance80": {
+                        "naishin": 111,
+                        "hensachi": 56
+                  }
+            }
       },
       {
             "id": "csv-綾瀬西高校-普通",
@@ -2659,7 +3576,17 @@
                   "chance60": 426,
                   "chance80": 458
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 66,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 71,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-綾瀬高校-普通",
@@ -2676,7 +3603,17 @@
                   "chance60": 540,
                   "chance80": 572
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 84,
+                        "hensachi": 42
+                  },
+                  "chance80": {
+                        "naishin": 89,
+                        "hensachi": 44
+                  }
+            }
       },
       {
             "id": "csv-舞岡高校-普通",
@@ -2693,7 +3630,17 @@
                   "chance60": 547,
                   "chance80": 579
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 85,
+                        "hensachi": 45
+                  },
+                  "chance80": {
+                        "naishin": 89,
+                        "hensachi": 47
+                  }
+            }
       },
       {
             "id": "csv-茅ケ崎北陵高校-普通",
@@ -2710,7 +3657,17 @@
                   "chance60": 796,
                   "chance80": 828
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 113,
+                        "hensachi": 60
+                  },
+                  "chance80": {
+                        "naishin": 117,
+                        "hensachi": 62
+                  }
+            }
       },
       {
             "id": "csv-茅ケ崎西浜高校-普通",
@@ -2727,7 +3684,17 @@
                   "chance60": 512,
                   "chance80": 544
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-茅ケ崎高校-普通",
@@ -2744,7 +3711,17 @@
                   "chance60": 622,
                   "chance80": 654
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 95,
+                        "hensachi": 49
+                  },
+                  "chance80": {
+                        "naishin": 98,
+                        "hensachi": 51
+                  }
+            }
       },
       {
             "id": "csv-荏田高校-普通",
@@ -2761,7 +3738,17 @@
                   "chance60": 616,
                   "chance80": 648
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 90,
+                        "hensachi": 49
+                  },
+                  "chance80": {
+                        "naishin": 94,
+                        "hensachi": 51
+                  }
+            }
       },
       {
             "id": "csv-菅高校-普通",
@@ -2778,7 +3765,17 @@
                   "chance60": 422,
                   "chance80": 454
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 69,
+                        "hensachi": 36
+                  },
+                  "chance80": {
+                        "naishin": 74,
+                        "hensachi": 38
+                  }
+            }
       },
       {
             "id": "csv-藤沢清流高校-普通",
@@ -2795,7 +3792,17 @@
                   "chance60": 558,
                   "chance80": 590
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 88,
+                        "hensachi": 45
+                  },
+                  "chance80": {
+                        "naishin": 92,
+                        "hensachi": 47
+                  }
+            }
       },
       {
             "id": "csv-藤沢西高校-普通",
@@ -2812,7 +3819,17 @@
                   "chance60": 725,
                   "chance80": 757
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 109,
+                        "hensachi": 55
+                  },
+                  "chance80": {
+                        "naishin": 112,
+                        "hensachi": 57
+                  }
+            }
       },
       {
             "id": "csv-西湘高校-普通",
@@ -2829,7 +3846,17 @@
                   "chance60": 680,
                   "chance80": 712
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 105,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 108,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-足柄高校-普通",
@@ -2846,7 +3873,17 @@
                   "chance60": 505,
                   "chance80": 537
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 82,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 87,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-追浜高校-普通",
@@ -2863,7 +3900,17 @@
                   "chance60": 752,
                   "chance80": 784
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 110,
+                        "hensachi": 57
+                  },
+                  "chance80": {
+                        "naishin": 114,
+                        "hensachi": 59
+                  }
+            }
       },
       {
             "id": "csv-逗子葉山高校-普通",
@@ -2880,7 +3927,17 @@
                   "chance60": 509,
                   "chance80": 541
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 79,
+                        "hensachi": 43
+                  },
+                  "chance80": {
+                        "naishin": 84,
+                        "hensachi": 45
+                  }
+            }
       },
       {
             "id": "csv-金井高校-普通",
@@ -2897,7 +3954,17 @@
                   "chance60": 597,
                   "chance80": 629
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 91,
+                        "hensachi": 48
+                  },
+                  "chance80": {
+                        "naishin": 95,
+                        "hensachi": 50
+                  }
+            }
       },
       {
             "id": "csv-鎌倉高校-普通",
@@ -2914,7 +3981,17 @@
                   "chance60": 838,
                   "chance80": 870
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 120,
+                        "hensachi": 62
+                  },
+                  "chance80": {
+                        "naishin": 124,
+                        "hensachi": 64
+                  }
+            }
       },
       {
             "id": "csv-霧が丘高校-普通",
@@ -2931,7 +4008,17 @@
                   "chance60": 560,
                   "chance80": 592
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 86,
+                        "hensachi": 46
+                  },
+                  "chance80": {
+                        "naishin": 90,
+                        "hensachi": 48
+                  }
+            }
       },
       {
             "id": "csv-高浜高校-普通",
@@ -2948,7 +4035,17 @@
                   "chance60": 501,
                   "chance80": 533
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 81,
+                        "hensachi": 41
+                  },
+                  "chance80": {
+                        "naishin": 86,
+                        "hensachi": 43
+                  }
+            }
       },
       {
             "id": "csv-鶴嶺高校-普通",
@@ -2965,7 +4062,17 @@
                   "chance60": 648,
                   "chance80": 680
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 101,
+                        "hensachi": 51
+                  },
+                  "chance80": {
+                        "naishin": 104,
+                        "hensachi": 53
+                  }
+            }
       },
       {
             "id": "csv-鶴見高校-普通",
@@ -2982,7 +4089,17 @@
                   "chance60": 672,
                   "chance80": 704
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 100,
+                        "hensachi": 52
+                  },
+                  "chance80": {
+                        "naishin": 103,
+                        "hensachi": 54
+                  }
+            }
       },
       {
             "id": "csv-麻溝台高校-普通",
@@ -2999,7 +4116,17 @@
                   "chance60": 731,
                   "chance80": 763
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 107,
+                        "hensachi": 55
+                  },
+                  "chance80": {
+                        "naishin": 111,
+                        "hensachi": 57
+                  }
+            }
       },
       {
             "id": "csv-麻生高校-普通",
@@ -3016,7 +4143,17 @@
                   "chance60": 563,
                   "chance80": 595
             },
-            "source": "kanagaku"
+            "source": "kanagaku",
+            "guides": {
+                  "chance60": {
+                        "naishin": 87,
+                        "hensachi": 46
+                  },
+                  "chance80": {
+                        "naishin": 91,
+                        "hensachi": 48
+                  }
+            }
       }
 ];
 
@@ -3144,21 +4281,58 @@
       return parts.join(" + ") || "-";
     }
 
+    function guideNaishin(school, benchmarkKey) {
+      const guides = school.guides || {};
+      if (Number.isFinite(Number(guides[benchmarkKey]?.naishin))) {
+        return Number(guides[benchmarkKey].naishin);
+      }
+      if (benchmarkKey === "border") {
+        const benchmarks = normalizeBenchmarks(school);
+        const n60 = Number(guides.chance60?.naishin);
+        const n80 = Number(guides.chance80?.naishin);
+        if (Number.isFinite(n60) && Number.isFinite(n80) && benchmarks.chance80 !== benchmarks.chance60) {
+          const slope = (n80 - n60) / (benchmarks.chance80 - benchmarks.chance60);
+          return clamp(n60 + (benchmarks.border - benchmarks.chance60) * slope, 0, 135);
+        }
+      }
+      return undefined;
+    }
+
     function benchmarkConversion(school, benchmarkKey) {
       const benchmarks = normalizeBenchmarks(school);
       const ratios = Array.isArray(school.ratios) ? school.ratios : [3, 7, 0];
-      const maxS = (ratios[0] + ratios[1] + ratios[2]) * 100 || 1000;
       const s = benchmarks[benchmarkKey] || 0;
-      const rate = maxS > 0 ? s / maxS : 0;
+      const sourceNaishin = guideNaishin(school, benchmarkKey);
+      const gradeRaw = Number.isFinite(sourceNaishin) ? sourceNaishin : clamp((s / 1000) * 135, 0, 135);
+      const gradeS = ratios[0] > 0 ? (gradeRaw / 135) * 100 * ratios[0] : 0;
+      const examAvg = ratios[1] > 0 ? clamp(((s - gradeS) / ratios[1]), 0, 100) : 0;
       return {
         s,
-        gradeAvg: rate * 5,
-        examAvg: rate * 100
+        gradeRaw,
+        gradeAvg: gradeRaw / 27,
+        examAvg,
+        estimated: !Number.isFinite(sourceNaishin)
       };
+    }
+
+    function formatBenchmarkLine(label, data) {
+      return `<span><b>${label}</b> S${round(data.s)} / 内申${round(data.gradeRaw, 1)}/135 (${formatAverage(data.gradeAvg, 2)}) / 入試${formatAverage(data.examAvg, 1)}</span>`;
+    }
+
+    function renderCriteriaSummary(school) {
+      const border = benchmarkConversion(school, "border");
+      const chance60 = benchmarkConversion(school, "chance60");
+      const chance80 = benchmarkConversion(school, "chance80");
+      $("criteriaSummary").innerHTML = [
+        formatBenchmarkLine("B", border),
+        formatBenchmarkLine("60%", chance60),
+        formatBenchmarkLine("80%", chance80)
+      ].join("");
     }
 
     function getBenchmarkRows() {
       return state.schools.map((school) => {
+        const border = benchmarkConversion(school, "border");
         const chance60 = benchmarkConversion(school, "chance60");
         const chance80 = benchmarkConversion(school, "chance80");
         const region = getSchoolRegion(school);
@@ -3172,11 +4346,17 @@
           hasSpecial: Number(school.ratios?.[2] || 0) > 0,
           hasFocus: focus !== "-",
           focus,
+          borderS: border.s,
+          borderGradeAvg: border.gradeAvg,
+          borderGradeRaw: border.gradeRaw,
+          borderExamAvg: border.examAvg,
           chance60S: chance60.s,
           chance60GradeAvg: chance60.gradeAvg,
+          chance60GradeRaw: chance60.gradeRaw,
           chance60ExamAvg: chance60.examAvg,
           chance80S: chance80.s,
           chance80GradeAvg: chance80.gradeAvg,
+          chance80GradeRaw: chance80.gradeRaw,
           chance80ExamAvg: chance80.examAvg
         };
       });
@@ -3231,6 +4411,9 @@
           <td><span class="benchmark-name">${escapeHtml(row.name)}</span></td>
           <td>${escapeHtml(row.region)}</td>
           <td>${escapeHtml(row.ratio)}</td>
+          <td>${round(row.borderS)}</td>
+          <td>${formatAverage(row.borderGradeAvg, 2)}</td>
+          <td>${formatAverage(row.borderExamAvg, 1)}</td>
           <td>${round(row.chance60S)}</td>
           <td>${formatAverage(row.chance60GradeAvg, 2)}</td>
           <td>${formatAverage(row.chance60ExamAvg, 1)}</td>
@@ -3241,7 +4424,7 @@
         </tr>
       `).join("") || `
         <tr>
-          <td colspan="10">条件に合う学校がありません。</td>
+          <td colspan="13">条件に合う学校がありません。</td>
         </tr>
       `;
       document.querySelectorAll("[data-benchmark-sort]").forEach((button) => {
@@ -3608,6 +4791,7 @@
 
       $("schoolName").textContent = school.name;
       $("ratioText").textContent = `${result.ratios[0]}:${result.ratios[1]}:${result.ratios[2]}`;
+      renderCriteriaSummary(school);
       const focusText = result.examFocusText ? ` / ${result.examFocusText}` : "";
       $("formulaText").textContent = `内申 ${result.ratios[0]} / 入試 ${result.ratios[1]} / 特色 ${result.ratios[2]}${focusText}　目標 ${targetLabel} ${round(result.activeTarget)}S`;
       $("statusBadge").textContent = status.label;
